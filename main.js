@@ -164,8 +164,16 @@ class AppComponent {
             css: true,
             insertCssBefore: 'style',
         };
-        Object(esri_loader__WEBPACK_IMPORTED_MODULE_0__["loadModules"])(['esri/views/MapView', 'esri/Map', 'esri/layers/FeatureLayer'], options)
-            .then(([MapView, Map, FeatureLayer]) => {
+        Object(esri_loader__WEBPACK_IMPORTED_MODULE_0__["loadModules"])([
+            'esri/views/MapView',
+            'esri/Map',
+            'esri/layers/FeatureLayer',
+            'esri/widgets/BasemapToggle',
+            'esri/widgets/Compass',
+            'esri/widgets/Home',
+            'esri/widgets/ScaleBar',
+        ], options)
+            .then(([MapView, Map, FeatureLayer, BasemapToggle, Compass, Home, ScaleBar,]) => {
             //#region HOSPLayer(Point)
             var HOSPLayerSymbol = {
                 type: 'simple',
@@ -198,24 +206,24 @@ class AppComponent {
                 title: '{AR_NAME}',
                 content: `<table class="popupTableInfo">
           <tr>
+          <td>المحافظة</td>
+          <td>{GOV_NAME}</td>
+          </tr>
+          <tr>
+          <td>المدينة</td>
+          <td>{EDARA_NAME}</td>
+          </tr>
+          <tr>
+          <td>HOSP_CODE</td>
+          <td>{HOSP_CODE}</td>
+          </tr>
+          <tr>
           <td>GOV_CODE</td>
           <td>{GOV_CODE}</td>
           </tr>
           <tr>
           <td>EDARA_CODE</td>
           <td>{EDARA_CODE}</td>
-          </tr>
-          <tr>
-          <td>GOV_NAME</td>
-          <td>{GOV_NAME}</td>
-          </tr>
-          <tr>
-          <td>EDARA_NAME</td>
-          <td>{EDARA_NAME}</td>
-          </tr>
-          <tr>
-          <td>HOSP_CODE</td>
-          <td>{HOSP_CODE}</td>
           </tr>
         </table>`,
             };
@@ -269,6 +277,30 @@ class AppComponent {
                 },
             });
             window.view = view;
+            //widgets
+            var basemapToggle = new BasemapToggle({
+                view: view,
+                nextBasemap: 'streets',
+            });
+            view.ui.add(basemapToggle, {
+                position: 'top-right',
+            });
+            var compass = new Compass({
+                view: view,
+            });
+            view.ui.add(compass, 'top-left');
+            var homeWidget = new Home({
+                view: view,
+            });
+            view.ui.add(homeWidget, 'top-left');
+            var scaleBar = new ScaleBar({
+                view: view,
+                style: 'ruler',
+                unit: 'metric',
+            });
+            view.ui.add(scaleBar, {
+                position: 'bottom-left',
+            });
         })
             .catch((err) => {
             // handle any errors
