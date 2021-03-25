@@ -17,43 +17,74 @@ export class AppComponent implements OnInit {
       insertCssBefore: 'style',
     };
     loadModules(
-      ['esri/views/MapView', 'esri/Map', 'esri/layers/FeatureLayer'],
+      [
+        'esri/views/MapView',
+        'esri/Map',
+        'esri/layers/FeatureLayer',
+        'esri/widgets/BasemapToggle',
+        'esri/widgets/Compass',
+        'esri/widgets/Home',
+        'esri/widgets/ScaleBar',
+        'esri/Graphic',
+      ],
       options
     )
-      .then(([MapView, Map, FeatureLayer]) => {
-        //#region HOSPLayer(Point)
-        var HOSPLayerSymbol = {
-          type: 'simple',
-          symbol: {
-            type: 'picture-marker',
-            url: '/assets/images/hospital.png',
-            width: '30px',
-            height: '30px',
-          },
-        };
-        4;
-        var HOSPLayerLabel = {
-          symbol: {
-            type: 'text',
-            color: 'red',
-            haloColor: 'white',
-            haloSize: '1.5px',
-            font: {
-              size: '12px',
-              family: 'Noto Sans',
-              style: 'italic',
-              weight: 'normal',
+      .then(
+        ([
+          MapView,
+          Map,
+          FeatureLayer,
+          BasemapToggle,
+          Compass,
+          Home,
+          ScaleBar,
+          Graphic,
+        ]) => {
+          //#region HOSPLayer(Point)
+          var HOSPLayerSymbol = {
+            type: 'simple',
+            symbol: {
+              type: 'picture-marker',
+              url:
+                'https://upload.wikimedia.org/wikipedia/commons/1/18/Hospital_pointer.png',
+              width: '30px',
+              height: '30px',
             },
-          },
-          labelPlacement: 'above-center',
-          labelExpressionInfo: {
-            expression: '$feature.HC_NUM',
-          },
-        };
+          };
+          4;
+          var HOSPLayerLabel = {
+            symbol: {
+              type: 'text',
+              color: 'red',
+              haloColor: 'white',
+              haloSize: '1.5px',
+              font: {
+                size: '12px',
+                // style: 'italic',
+                weight: 'normal',
+              },
+            },
+            labelPlacement: 'above-center',
+            labelExpressionInfo: {
+              expression: '$feature.AR_NAME',
+            },
+          };
 
-        var popupHOSPLayer = {
-          title: '{AR_NAME}',
-          content: `<table class="popupTableInfo">
+          var popupHOSPLayer = {
+            title: '{AR_NAME}',
+            content: `<table class="popupTableInfo">
+          <tr>
+          <td>المحافظة</td>
+          <td>{GOV_NAME}</td>
+          </tr>
+          <tr>
+          <td>المدينة</td>
+          <td>{EDARA_NAME}</td>
+          </tr>
+          <tr>
+          <td>HOSP_CODE</td>
+          <td>{HOSP_CODE}</td>
+          </tr>
           <tr>
           <td>GOV_CODE</td>
           <td>{GOV_CODE}</td>
@@ -62,77 +93,144 @@ export class AppComponent implements OnInit {
           <td>EDARA_CODE</td>
           <td>{EDARA_CODE}</td>
           </tr>
-          <tr>
-          <td>GOV_NAME</td>
-          <td>{GOV_NAME}</td>
-          </tr>
-          <tr>
-          <td>EDARA_NAME</td>
-          <td>{EDARA_NAME}</td>
-          </tr>
-          <tr>
-          <td>HOSP_CODE</td>
-          <td>{HOSP_CODE}</td>
-          </tr>
         </table>`,
-        };
+          };
 
-        const HOSPLayer = new FeatureLayer({
-          url:
-            'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/0',
-          outFields: ['*'],
-          popupEnabled: true,
-          renderer: HOSPLayerSymbol,
-          labelingInfo: [HOSPLayerLabel],
-          popupTemplate: popupHOSPLayer,
-        });
-        //#endregion
+          const HOSPLayer = new FeatureLayer({
+            url:
+              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/0',
+            outFields: ['*'],
+            popupEnabled: true,
+            renderer: HOSPLayerSymbol,
+            labelingInfo: [HOSPLayerLabel],
+            popupTemplate: popupHOSPLayer,
+          });
+          //#endregion
 
-        var EGYPTLayerSymbol = {
-          type: 'simple', // autocasts as new SimpleRenderer()
-          symbol: {
-            type: 'simple-fill', // autocasts as new SimpleFillSymbol()
-            color: 'rgba(138,43,226)',
-            style: 'backward-diagonal',
-            outline: {
-              color: 'rgb(255,0,0)',
-              width: 1.5,
-              style: 'dash',
-            },
-          },
-        };
-        const EGYPTLayer = new FeatureLayer({
-          url:
-            'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/1',
-          renderer: EGYPTLayerSymbol,
-        });
-
-        // then we load a web map from an id
-        var map = new Map({
-          basemap: 'satellite',
-          layers: [HOSPLayer, EGYPTLayer],
-        });
-        // and we show that map in a container w/ id #viewDiv
-        var view = new MapView({
-          map: map,
-          container: 'viewDiv',
-          center: [31.31652832030437, 30.417887641063995],
-          zoom: 8,
-          popup: {
-            dockEnabled: true,
-            dockOptions: {
-              buttonEnabled: true,
-              breakpoint: {
-                width: 600,
-                height: 1000,
+          //#region GOVLayer
+          let GOVLayerSymbol = {
+            type: 'simple',
+            symbol: {
+              type: 'simple-fill',
+              color: [255, 255, 0, 0.7],
+              style: 'backward-diagonal',
+              outline: {
+                width: 1,
+                color: [255, 255, 0, 0.7],
+                style: 'solid',
               },
-              position: 'top-left',
             },
-          },
-        });
+          };
+          const GOVLayer = new FeatureLayer({
+            url:
+              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/2',
+            outFields: ['*'],
+            renderer: GOVLayerSymbol,
+          });
+          //#endregion
 
-        (window as any).view = view;
-      })
+          //#region ADMINLayer
+          let ADMINLayerSymbol = {
+            type: 'simple',
+            symbol: {
+              type: 'simple-fill',
+              color: [133, 160, 214, 0.7],
+              style: 'solid',
+              outline: {
+                width: 1,
+                color: [133, 160, 214, 0.7],
+                style: 'solid',
+              },
+            },
+          };
+          const ADMINLLayer = new FeatureLayer({
+            url:
+              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/3',
+            outFields: ['*'],
+            renderer: ADMINLayerSymbol,
+          });
+          //#endregion
+
+          //#region SHAYAKALayer
+          let SHAYAKALayerSymbol = {
+            type: 'simple',
+            symbol: {
+              type: 'simple-fill',
+              color: [209, 117, 136, 0.7],
+              style: 'solid',
+              outline: {
+                width: 1,
+                color: [209, 117, 136, 0.7],
+                style: 'solid',
+              },
+            },
+          };
+          const SHAYAKALayer = new FeatureLayer({
+            url:
+              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/4',
+            outFields: ['*'],
+            renderer: SHAYAKALayerSymbol,
+          });
+          //#endregion
+
+          // then we load a web map from an id
+          var map = new Map({
+            basemap: 'satellite',
+          });
+          map.addMany([GOVLayer, ADMINLLayer, SHAYAKALayer, HOSPLayer]);
+          // and we show that map in a container w/ id #viewDiv
+          var view = new MapView({
+            map: map,
+            container: 'viewDiv',
+            center: [31.31652832030437, 30.417887641063995],
+            zoom: 8,
+            popup: {
+              dockEnabled: true,
+              dockOptions: {
+                buttonEnabled: true,
+                breakpoint: {
+                  width: 600,
+                  height: 1000,
+                },
+                position: 'top-left',
+              },
+            },
+          });
+
+          (window as any).view = view;
+
+          //widgets
+          var basemapToggle = new BasemapToggle({
+            view: view,
+            nextBasemap: 'streets',
+          });
+
+          view.ui.add(basemapToggle, {
+            position: 'top-right',
+          });
+
+          var compass = new Compass({
+            view: view,
+          });
+
+          view.ui.add(compass, 'top-left');
+
+          var homeWidget = new Home({
+            view: view,
+          });
+
+          view.ui.add(homeWidget, 'top-left');
+
+          var scaleBar = new ScaleBar({
+            view: view,
+            style: 'ruler',
+            unit: 'metric',
+          });
+          view.ui.add(scaleBar, {
+            position: 'bottom-left',
+          });
+        }
+      )
       .catch((err) => {
         // handle any errors
         console.error(err);
