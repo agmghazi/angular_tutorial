@@ -172,8 +172,9 @@ class AppComponent {
             'esri/widgets/Compass',
             'esri/widgets/Home',
             'esri/widgets/ScaleBar',
+            'esri/Graphic',
         ], options)
-            .then(([MapView, Map, FeatureLayer, BasemapToggle, Compass, Home, ScaleBar,]) => {
+            .then(([MapView, Map, FeatureLayer, BasemapToggle, Compass, Home, ScaleBar, Graphic,]) => {
             //#region HOSPLayer(Point)
             var HOSPLayerSymbol = {
                 type: 'simple',
@@ -193,7 +194,7 @@ class AppComponent {
                     haloSize: '1.5px',
                     font: {
                         size: '12px',
-                        style: 'italic',
+                        // style: 'italic',
                         weight: 'normal',
                     },
                 },
@@ -236,28 +237,71 @@ class AppComponent {
                 popupTemplate: popupHOSPLayer,
             });
             //#endregion
-            var EGYPTLayerSymbol = {
+            //#region GOVLayer
+            let GOVLayerSymbol = {
                 type: 'simple',
                 symbol: {
                     type: 'simple-fill',
-                    color: 'rgba(138,43,226)',
+                    color: [255, 255, 0, 0.7],
                     style: 'backward-diagonal',
                     outline: {
-                        color: 'rgb(255,0,0)',
-                        width: 1.5,
-                        style: 'dash',
+                        width: 1,
+                        color: [255, 255, 0, 0.7],
+                        style: 'solid',
                     },
                 },
             };
-            const EGYPTLayer = new FeatureLayer({
-                url: 'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/1',
-                renderer: EGYPTLayerSymbol,
+            const GOVLayer = new FeatureLayer({
+                url: 'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/2',
+                outFields: ['*'],
+                renderer: GOVLayerSymbol,
             });
+            //#endregion
+            //#region ADMINLayer
+            let ADMINLayerSymbol = {
+                type: 'simple',
+                symbol: {
+                    type: 'simple-fill',
+                    color: [133, 160, 214, 0.7],
+                    style: 'solid',
+                    outline: {
+                        width: 1,
+                        color: [133, 160, 214, 0.7],
+                        style: 'solid',
+                    },
+                },
+            };
+            const ADMINLLayer = new FeatureLayer({
+                url: 'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/3',
+                outFields: ['*'],
+                renderer: ADMINLayerSymbol,
+            });
+            //#endregion
+            //#region SHAYAKALayer
+            let SHAYAKALayerSymbol = {
+                type: 'simple',
+                symbol: {
+                    type: 'simple-fill',
+                    color: [209, 117, 136, 0.7],
+                    style: 'solid',
+                    outline: {
+                        width: 1,
+                        color: [209, 117, 136, 0.7],
+                        style: 'solid',
+                    },
+                },
+            };
+            const SHAYAKALayer = new FeatureLayer({
+                url: 'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/4',
+                outFields: ['*'],
+                renderer: SHAYAKALayerSymbol,
+            });
+            //#endregion
             // then we load a web map from an id
             var map = new Map({
                 basemap: 'satellite',
-                layers: [HOSPLayer, EGYPTLayer],
             });
+            map.addMany([GOVLayer, ADMINLLayer, SHAYAKALayer, HOSPLayer]);
             // and we show that map in a container w/ id #viewDiv
             var view = new MapView({
                 map: map,
