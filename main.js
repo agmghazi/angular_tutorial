@@ -171,7 +171,7 @@ class AppComponent {
                 type: 'simple',
                 symbol: {
                     type: 'picture-marker',
-                    url: '/assets/images/hospital.png',
+                    url: 'https://upload.wikimedia.org/wikipedia/commons/1/18/Hospital_pointer.png',
                     width: '30px',
                     height: '30px',
                 },
@@ -185,14 +185,13 @@ class AppComponent {
                     haloSize: '1.5px',
                     font: {
                         size: '12px',
-                        family: 'Noto Sans',
                         style: 'italic',
                         weight: 'normal',
                     },
                 },
                 labelPlacement: 'above-center',
                 labelExpressionInfo: {
-                    expression: '$feature.HC_NUM',
+                    expression: '$feature.AR_NAME',
                 },
             };
             var popupHOSPLayer = {
