@@ -1,5 +1,33 @@
 @import "~bootstrap/dist/css/bootstrap.css";
 
-body {
-  padding-top: 20px;
+html,
+body,
+#viewDiv {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+
+.popupTableInfo {
+  font-family: "Avenir Next", "Helvetica Neue", "Helvetica", "Arial",
+    "sans-serif";
+  border-collapse: collapse;
+  width: 100%;
+  direction: rtl;
+}
+
+.popupTableInfo td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: right;
+}
+
+.popupTableInfo tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.popupTableInfo tr:hover {
+  background-color: #ddd;
 }
