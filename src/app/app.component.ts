@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
     }
 
     getData('98 hospital');
-    
+
     let name = 'ahmed';
 
     setDefaultOptions({ version: '4.18' });
@@ -89,53 +89,172 @@ export class AppComponent implements OnInit {
             },
           };
 
+          function buildPopupHOSPLayer(feature: any) {
+            console.log(feature.graphic.attributes.GOV_NAME);
+
+            let div = document.createElement('div');
+            div.innerHTML = `<div class="container">
+            <div class="tab-wrap">
+              <!-- active tab on page load gets checked attribute -->
+              <input type="radio" id="tab1" name="tabGroup1" class="tab" checked>
+              <label for="tab1">Short</label>
+
+              <input type="radio" id="tab2" name="tabGroup1" class="tab">
+              <label for="tab2">Medium</label>
+
+              <input type="radio" id="tab3" name="tabGroup1" class="tab">
+              <label for="tab3">Long</label>
+
+              <div class="tab__content">
+                <h3>Short Section</h3>
+                <p>Praesent nonummy.</p>
+                <table class="popupTableInfo">
+                  <tr>
+                    <td>المحافظة</td>
+                    <td>${feature.graphic.attributes.GOV_NAME}</td>
+                  </tr>
+
+                  <tr>
+                    <td>المركز</td>
+                    <td>{MARKAZ}</td>
+                  </tr>
+
+                  <tr>
+                    <td>المدينة</td>
+                    <td>{EDARA_NAME}</td>
+                  </tr>
+
+                  <tr>
+                    <td>العنوان</td>
+                    <td>{ADDRESS}</td>
+                  </tr>
+
+                  <tr>
+                    <td>HOSP_CODE</td>
+                    <td>{HOSP_CODE}</td>
+                  </tr>
+
+                  <tr>
+                    <td>GOV_CODE</td>
+                    <td>{GOV_CODE}</td>
+                  </tr>
+
+                  <tr>
+                    <td>EDARA_CODE</td>
+                    <td>{EDARA_CODE}</td>
+                  </tr>
+
+
+                  <tr>
+                    <td>EDARA_CODE</td>
+                    <td>${name}</td>
+                  </tr>
+                </table>
+              </div>
+
+              <div class="tab__content">
+                <h3>Medium Section</h3>
+                <p>Praesent nonummy.</p>
+                <table class="popupTableInfo">
+                  <tr>
+                    <td>المحافظة</td>
+                    <td>{GOV_NAME}</td>
+                  </tr>
+
+                  <tr>
+                    <td>المركز</td>
+                    <td>{MARKAZ}</td>
+                  </tr>
+
+                  <tr>
+                    <td>المدينة</td>
+                    <td>{EDARA_NAME}</td>
+                  </tr>
+
+                  <tr>
+                    <td>العنوان</td>
+                    <td>{ADDRESS}</td>
+                  </tr>
+
+                  <tr>
+                    <td>HOSP_CODE</td>
+                    <td>{HOSP_CODE}</td>
+                  </tr>
+
+                  <tr>
+                    <td>GOV_CODE</td>
+                    <td>{GOV_CODE}</td>
+                  </tr>
+
+                  <tr>
+                    <td>EDARA_CODE</td>
+                    <td>{EDARA_CODE}</td>
+                  </tr>
+
+
+                  <tr>
+                    <td>EDARA_CODE</td>
+                    <td>${name}</td>
+                  </tr>
+                </table>
+              </div>
+
+              <div class="tab__content">
+                <h3>Long Section</h3>
+                <p>Praesent nonummy.</p>
+                <table class="popupTableInfo">
+                  <tr>
+                    <td>المحافظة</td>
+                    <td>{GOV_NAME}</td>
+                  </tr>
+
+                  <tr>
+                    <td>المركز</td>
+                    <td>{MARKAZ}</td>
+                  </tr>
+
+                  <tr>
+                    <td>المدينة</td>
+                    <td>{EDARA_NAME}</td>
+                  </tr>
+
+                  <tr>
+                    <td>العنوان</td>
+                    <td>{ADDRESS}</td>
+                  </tr>
+
+                  <tr>
+                    <td>HOSP_CODE</td>
+                    <td>{HOSP_CODE}</td>
+                  </tr>
+
+                  <tr>
+                    <td>GOV_CODE</td>
+                    <td>{GOV_CODE}</td>
+                  </tr>
+
+                  <tr>
+                    <td>EDARA_CODE</td>
+                    <td>{EDARA_CODE}</td>
+                  </tr>
+
+
+                  <tr>
+                    <td>EDARA_CODE</td>
+                    <td>${name}</td>
+                  </tr>
+                </table>
+              </div>
+
+
+            </div>
+          </div>
+          `;
+            return div;
+          }
           var popupHOSPLayer = {
             title: '{AR_NAME}',
-            content: `<table class="popupTableInfo">
-          <tr>
-          <td>المحافظة</td>
-          <td>{GOV_NAME}</td>
-          </tr>
-
-          <tr>
-          <td>المركز</td>
-          <td>{MARKAZ}</td>
-          </tr>
-
-          <tr>
-          <td>المدينة</td>
-          <td>{EDARA_NAME}</td>
-          </tr>
-
-          <tr>
-          <td>العنوان</td>
-          <td>{ADDRESS}</td>
-          </tr>
-
-          <tr>
-          <td>HOSP_CODE</td>
-          <td>{HOSP_CODE}</td>
-          </tr>
-
-          <tr>
-          <td>GOV_CODE</td>
-          <td>{GOV_CODE}</td>
-          </tr>
-
-          <tr>
-          <td>EDARA_CODE</td>
-          <td>{EDARA_CODE}</td>
-          </tr>
-
-
-          <tr>
-          <td>EDARA_CODE</td>
-          <td>${name}</td>
-          </tr>
-        </table>
-
-        <p> البيانات الوصفية المرتبطة ب {AR_NAME}</p>
-        `,
+            content: buildPopupHOSPLayer,
           };
 
           const HOSPLayer = new FeatureLayer({
