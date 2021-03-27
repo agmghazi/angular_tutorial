@@ -107,17 +107,107 @@ export class AppComponent implements OnInit {
           <td>EDARA_CODE</td>
           <td>{EDARA_CODE}</td>
           </tr>
-        </table>`,
+        </table>
+
+        <p> البيانات الوصفية المرتبطة ب {AR_NAME}</p>
+        `,
           };
 
           const HOSPLayer = new FeatureLayer({
             url:
               'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_Health_gdb/FeatureServer/0',
-            outFields: ['*'],
             popupEnabled: true,
             renderer: HOSPLayerSymbol,
             labelingInfo: [HOSPLayerLabel],
             popupTemplate: popupHOSPLayer,
+            // popupTemplate: {
+            //   title: '{AR_NAME}',
+            //   content: [
+            //     {
+            //       type: 'fields', // FieldsContentElement
+            //       fieldInfos: [
+            //         {
+            //           fieldName: 'GOV_NAME',
+            //           label: 'المحافظة',
+            //         },
+            //         {
+            //           fieldName: 'MARKAZ',
+            //           visible: true,
+            //           label: 'المركز',
+            //         },
+            //         {
+            //           fieldName: 'EDARA_NAME',
+            //           label: 'المدينة',
+            //         },
+            //         {
+            //           fieldName: 'ADDRESS',
+            //           visible: true,
+            //           label: 'العنوان',
+            //         },
+            //         {
+            //           fieldName: 'HOSP_CODE',
+            //           visible: true,
+            //           label: 'HOSP_CODE',
+            //         },
+            //         {
+            //           fieldName: 'GOV_CODE',
+            //           visible: true,
+            //           label: 'GOV_CODE',
+            //         },
+            //         {
+            //           fieldName: 'EDARA_CODE',
+            //           visible: true,
+            //           label: 'EDARA_CODE',
+            //         },
+            //       ],
+            //     },
+            //     {
+            //       type: 'text', // TextContentElement
+            //       text:
+            //         ' البيانات الوصفية المرتبطة ب {AR_NAME}',
+            //     },
+            //     {
+            //       type: 'fields', // MediaContentElement
+            //       fieldInfos: [
+            //         {
+            //           title: '<b>Count by type</b>',
+            //           type: 'pie-chart',
+            //           caption: '',
+            //           value: {
+            //             fields: ['relationships/0/Point_Count_COMMON'],
+            //             normalizeField: null,
+            //             tooltipField: 'relationships/0/COMMON',
+            //           },
+            //         },
+            //         {
+            //           title: '<b>Mexican Fan Palm</b>',
+            //           type: 'image',
+            //           caption: 'tree species',
+            //           value: {
+            //             sourceURL:
+            //               'https://www.sunset.com/wp-content/uploads/96006df453533f4c982212b8cc7882f5-800x0-c-default.jpg',
+            //           },
+            //         },
+            //         {
+            //           title: '<b>Indian Laurel Fig</b>',
+            //           caption: 'tree species',
+            //           value: {
+            //             sourceURL:
+            //               'https://selectree.calpoly.edu/images/0600/09/original/ficus-microcarpa-tree-3.jpg',
+            //           },
+            //         },
+            //       ],
+            //     },
+            //     {
+            //       // You can set a attachment element(s) within the popup as well.
+            //       // Similar to text and media elements, attachments can only be set
+            //       // within the content. Any attachmentInfos associated with the feature
+            //       // will be listed in the popup.
+            //       type: 'attachments', // AttachmentsContentElement
+            //     },
+            //   ],
+            // },
+            outFields: ['*'],
           });
           //#endregion
 
