@@ -77,18 +77,32 @@ export class AppComponent implements OnInit {
           <td>المحافظة</td>
           <td>{GOV_NAME}</td>
           </tr>
+
+          <tr>
+          <td>المركز</td>
+          <td>{MARKAZ}</td>
+          </tr>
+
           <tr>
           <td>المدينة</td>
           <td>{EDARA_NAME}</td>
           </tr>
+
+          <tr>
+          <td>العنوان</td>
+          <td>{ADDRESS}</td>
+          </tr>
+
           <tr>
           <td>HOSP_CODE</td>
           <td>{HOSP_CODE}</td>
           </tr>
+
           <tr>
           <td>GOV_CODE</td>
           <td>{GOV_CODE}</td>
           </tr>
+
           <tr>
           <td>EDARA_CODE</td>
           <td>{EDARA_CODE}</td>
@@ -98,7 +112,7 @@ export class AppComponent implements OnInit {
 
           const HOSPLayer = new FeatureLayer({
             url:
-              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/0',
+              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_Health_gdb/FeatureServer/0',
             outFields: ['*'],
             popupEnabled: true,
             renderer: HOSPLayerSymbol,
@@ -108,6 +122,16 @@ export class AppComponent implements OnInit {
           //#endregion
 
           //#region GOVLayer
+          var popupGOVLayer = {
+            title: '{Gov_name_E}',
+            content: `<table class="popupTableInfo">
+          <tr>
+          <td>اسم المحافظة</td>
+          <td>{اسم_ا}</td>
+          </tr>
+        </table>`,
+          };
+
           let GOVLayerSymbol = {
             type: 'simple',
             symbol: {
@@ -123,13 +147,35 @@ export class AppComponent implements OnInit {
           };
           const GOVLayer = new FeatureLayer({
             url:
-              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/2',
+              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_Health_gdb/FeatureServer/2',
             outFields: ['*'],
             renderer: GOVLayerSymbol,
+            popupEnabled: true,
+            popupTemplate: popupGOVLayer,
           });
           //#endregion
 
           //#region ADMINLayer
+          var popupADMINLayer = {
+            title: '{EDARA_NAME}',
+            content: `<table class="popupTableInfo">
+          <tr>
+          <td>TOTAL_POPU</td>
+          <td>{TOTAL_POPU}</td>
+          </tr>
+
+          <tr>
+          <td>HEALTH1_SP</td>
+          <td>{HEALTH1_SP}</td>
+          </tr>
+
+          <tr>
+          <td>DENSITY</td>
+          <td>{DENSITY}</td>
+          </tr>
+        </table>`,
+          };
+
           let ADMINLayerSymbol = {
             type: 'simple',
             symbol: {
@@ -145,13 +191,34 @@ export class AppComponent implements OnInit {
           };
           const ADMINLLayer = new FeatureLayer({
             url:
-              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/3',
+              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_Health_gdb/FeatureServer/3',
             outFields: ['*'],
             renderer: ADMINLayerSymbol,
+            popupEnabled: true,
+            popupTemplate: popupADMINLayer,
           });
           //#endregion
 
           //#region SHAYAKALayer
+          var popupSHAYAKALayer = {
+            title: '{GOV_NAME}',
+            content: `<table class="popupTableInfo">
+          <tr>
+          <td>GOV_CODE</td>
+          <td>{GOV_CODE}</td>
+          </tr>
+
+          <tr>
+          <td>SEC_NAME</td>
+          <td>{SEC_NAME}</td>
+          </tr>
+
+          <tr>
+          <td>SSEC_NAME</td>
+          <td>{SSEC_NAME}</td>
+          </tr>
+        </table>`,
+          };
           let SHAYAKALayerSymbol = {
             type: 'simple',
             symbol: {
@@ -167,9 +234,11 @@ export class AppComponent implements OnInit {
           };
           const SHAYAKALayer = new FeatureLayer({
             url:
-              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/Health_gdb/FeatureServer/4',
+              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_Health_gdb/FeatureServer/4',
             outFields: ['*'],
             renderer: SHAYAKALayerSymbol,
+            popupEnabled: true,
+            popupTemplate: popupSHAYAKALayer,
           });
           //#endregion
 
