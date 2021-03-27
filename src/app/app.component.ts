@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { loadModules } from 'esri-loader';
 import { setDefaultOptions } from 'esri-loader';
+import '../assets/Data/data.json';
+import * as Jsondata from '../assets/Data/data.json';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +11,24 @@ import { setDefaultOptions } from 'esri-loader';
 })
 export class AppComponent implements OnInit {
   constructor() {}
+
   ngOnInit(): void {
+    let hospitalData: any = (Jsondata as any).default;
+
+    function getData(id: any) {
+      hospitalData.forEach((element: any) => {
+        if (element.HospitalName == id) {
+          for (let i = 0; i < element.length; i++) {
+            console.log(element[i]);
+          }
+        }
+      });
+    }
+
+    getData('98 hospital');
+    
+    let name = 'ahmed';
+
     setDefaultOptions({ version: '4.18' });
 
     const options = {
@@ -106,6 +125,12 @@ export class AppComponent implements OnInit {
           <tr>
           <td>EDARA_CODE</td>
           <td>{EDARA_CODE}</td>
+          </tr>
+
+
+          <tr>
+          <td>EDARA_CODE</td>
+          <td>${name}</td>
           </tr>
         </table>
 
