@@ -15,18 +15,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     let hospitalData: any = (Jsondata as any).default;
 
-    function getData(id: any) {
-      hospitalData.forEach((element: any) => {
-        if (element.HospitalName == id) {
-          for (let i = 0; i < element.length; i++) {
-            console.log(element[i]);
-          }
-        }
-      });
-    }
-
-    getData('98 hospital');
-
     let name = 'ahmed';
 
     setDefaultOptions({ version: '4.18' });
@@ -45,6 +33,7 @@ export class AppComponent implements OnInit {
         'esri/widgets/Home',
         'esri/widgets/ScaleBar',
         'esri/Graphic',
+        'esri/widgets/Search',
       ],
       options
     )
@@ -58,6 +47,7 @@ export class AppComponent implements OnInit {
           Home,
           ScaleBar,
           Graphic,
+          Search,
         ]) => {
           //#region HOSPLayer(Point)
           var HOSPLayerSymbol = {
@@ -90,24 +80,153 @@ export class AppComponent implements OnInit {
           };
 
           function buildPopupHOSPLayer(feature: any) {
-            console.log(feature.graphic.attributes.GOV_NAME);
+            // console.log(feature.graphic.attributes.GOV_NAME);
+            // console.log(feature.graphic.attributes);
+            let DepartmentName_1;
+            let EquipmentSystemCode_1;
+            let EquipmentName_1;
+            let region_1;
+            let GovName_1;
+            let CityName_1;
+            let HospitalName_1;
+            let EquipmentCondition_1;
+            let EquipmentStatus_1;
+            let EquipmentOrgin_1;
+            let ManufacturerName_1;
+            let VendorName_1;
+            let EquipmentPurchaseCost_1;
+            let EquipmentPurchaseDate_1;
+            let EquipmentInstallDate_1;
+            let EquipmentExpectedLifeTime_1;
+            let EquipmentWarrantyExpiresDate_1;
+
+            let DepartmentName_2;
+            let EquipmentSystemCode_2;
+            let EquipmentName_2;
+            let region_2;
+            let GovName_2;
+            let CityName_2;
+            let HospitalName_2;
+            let EquipmentCondition_2;
+            let EquipmentStatus_2;
+            let EquipmentOrgin_2;
+            let ManufacturerName_2;
+            let VendorName_2;
+            let EquipmentPurchaseCost_2;
+            let EquipmentPurchaseDate_2;
+            let EquipmentInstallDate_2;
+            let EquipmentExpectedLifeTime_2;
+            let EquipmentWarrantyExpiresDate_2;
+
+            let DepartmentName_3;
+            let EquipmentSystemCode_3;
+            let EquipmentName_3;
+            let region_3;
+            let GovName_3;
+            let CityName_3;
+            let HospitalName_3;
+            let EquipmentCondition_3;
+            let EquipmentStatus_3;
+            let EquipmentOrgin_3;
+            let ManufacturerName_3;
+            let VendorName_3;
+            let EquipmentPurchaseCost_3;
+            let EquipmentPurchaseDate_3;
+            let EquipmentInstallDate_3;
+            let EquipmentExpectedLifeTime_3;
+            let EquipmentWarrantyExpiresDate_3;
+
+            function getData(id: any) {
+              hospitalData.forEach((element: any) => {
+                if (element.HospitalName == id) {
+                  if (element.DepartmentName == 'مبتسرين') {
+                    console.log('departmant', element.DepartmentName);
+                    EquipmentSystemCode_1 = element.EquipmentSystemCode;
+                    EquipmentName_1 = element.EquipmentName;
+                    region_1 = element.region;
+                    GovName_1 = element.GovName;
+                    CityName_1 = element.CityName;
+                    HospitalName_1 = element.HospitalName;
+                    EquipmentCondition_1 = element.EquipmentCondition;
+                    EquipmentStatus_1 = element.EquipmentStatus;
+                    DepartmentName_1 = element.DepartmentName;
+                    EquipmentOrgin_1 = element.EquipmentOrgin;
+                    ManufacturerName_1 = element.ManufacturerName;
+                    VendorName_1 = element.VendorName;
+                    EquipmentPurchaseCost_1 = element.EquipmentPurchaseCost;
+                    EquipmentPurchaseDate_1 = element.EquipmentPurchaseDate;
+                    EquipmentInstallDate_1 = element.EquipmentInstallDate;
+                    EquipmentExpectedLifeTime_1 =
+                      element.EquipmentExpectedLifeTime;
+                    EquipmentWarrantyExpiresDate_1 =
+                      element.EquipmentWarrantyExpiresDate;
+                  } else if (element.DepartmentName == 'الغسيل الكلوي') {
+                    EquipmentSystemCode_2 = element.EquipmentSystemCode;
+                    EquipmentName_2 = element.EquipmentName;
+                    region_2 = element.region;
+                    GovName_2 = element.GovName;
+                    CityName_2 = element.CityName;
+                    HospitalName_2 = element.HospitalName;
+                    EquipmentCondition_2 = element.EquipmentCondition;
+                    EquipmentStatus_2 = element.EquipmentStatus;
+                    DepartmentName_2 = element.DepartmentName;
+                    EquipmentOrgin_2 = element.EquipmentOrgin;
+                    ManufacturerName_2 = element.ManufacturerName;
+                    VendorName_2 = element.VendorName;
+                    EquipmentPurchaseCost_2 = element.EquipmentPurchaseCost;
+                    EquipmentPurchaseDate_2 = element.EquipmentPurchaseDate;
+                    EquipmentInstallDate_2 = element.EquipmentInstallDate;
+                    EquipmentExpectedLifeTime_2 =
+                      element.EquipmentExpectedLifeTime;
+                    EquipmentWarrantyExpiresDate_2 =
+                      element.EquipmentWarrantyExpiresDate;
+                  } else if (element.DepartmentName == 'Physical Therapy') {
+                    EquipmentSystemCode_3 = element.EquipmentSystemCode;
+                    EquipmentName_3 = element.EquipmentName;
+                    region_3 = element.region;
+                    GovName_3 = element.GovName;
+                    CityName_3 = element.CityName;
+                    HospitalName_3 = element.HospitalName;
+                    EquipmentCondition_3 = element.EquipmentCondition;
+                    EquipmentStatus_3 = element.EquipmentStatus;
+                    DepartmentName_3 = element.DepartmentName;
+                    EquipmentOrgin_3 = element.EquipmentOrgin;
+                    ManufacturerName_3 = element.ManufacturerName;
+                    VendorName_3 = element.VendorName;
+                    EquipmentPurchaseCost_3 = element.EquipmentPurchaseCost;
+                    EquipmentPurchaseDate_3 = element.EquipmentPurchaseDate;
+                    EquipmentInstallDate_3 = element.EquipmentInstallDate;
+                    EquipmentExpectedLifeTime_3 =
+                      element.EquipmentExpectedLifeTime;
+                    EquipmentWarrantyExpiresDate_3 =
+                      element.EquipmentWarrantyExpiresDate;
+                  }
+                }
+              });
+            }
+            console.log('search name', feature.graphic.attributes.NAME);
+
+            getData(feature.graphic.attributes.NAME);
 
             let div = document.createElement('div');
             div.innerHTML = `<div class="container">
             <div class="tab-wrap">
-              <!-- active tab on page load gets checked attribute -->
-              <input type="radio" id="tab1" name="tabGroup1" class="tab" checked>
-              <label for="tab1">Short</label>
 
-              <input type="radio" id="tab2" name="tabGroup1" class="tab">
-              <label for="tab2">Medium</label>
+              <input type="radio" id="tab1" name="tabGroup1" class="tab">
+              <label for="tab1">GIS Data</label>
+
+              <input type="radio" id="tab2" name="tabGroup1" class="tab" checked>
+              <label for="tab2">مبتسرين</label>
 
               <input type="radio" id="tab3" name="tabGroup1" class="tab">
-              <label for="tab3">Long</label>
+              <label for="tab3">الغسيل الكلوي</label>
+
+              <input type="radio" id="tab4" name="tabGroup1" class="tab">
+              <label for="tab4">Physical Therapy</label>
+
+
 
               <div class="tab__content">
-                <h3>Short Section</h3>
-                <p>Praesent nonummy.</p>
                 <table class="popupTableInfo">
                   <tr>
                     <td>المحافظة</td>
@@ -116,142 +235,311 @@ export class AppComponent implements OnInit {
 
                   <tr>
                     <td>المركز</td>
-                    <td>{MARKAZ}</td>
+                    <td>${feature.graphic.attributes.MARKAZ}</td>
                   </tr>
 
                   <tr>
                     <td>المدينة</td>
-                    <td>{EDARA_NAME}</td>
+                    <td>${feature.graphic.attributes.EDARA_NAME}</td>
                   </tr>
 
                   <tr>
                     <td>العنوان</td>
-                    <td>{ADDRESS}</td>
+                    <td>${feature.graphic.attributes.ADDRESS}</td>
                   </tr>
 
                   <tr>
                     <td>HOSP_CODE</td>
-                    <td>{HOSP_CODE}</td>
+                    <td>${feature.graphic.attributes.HOSP_CODE}</td>
                   </tr>
 
                   <tr>
                     <td>GOV_CODE</td>
-                    <td>{GOV_CODE}</td>
+                    <td>${feature.graphic.attributes.GOV_CODE}</td>
                   </tr>
 
                   <tr>
                     <td>EDARA_CODE</td>
-                    <td>{EDARA_CODE}</td>
+                    <td>${feature.graphic.attributes.EDARA_CODE}</td>
                   </tr>
 
-
                   <tr>
-                    <td>EDARA_CODE</td>
-                    <td>${name}</td>
+                    <td>code</td>
+                    <td>${feature.graphic.attributes.NAME}</td>
                   </tr>
                 </table>
               </div>
 
               <div class="tab__content">
-                <h3>Medium Section</h3>
-                <p>Praesent nonummy.</p>
                 <table class="popupTableInfo">
                   <tr>
-                    <td>المحافظة</td>
-                    <td>{GOV_NAME}</td>
+                    <td>DepartmentName</td>
+                    <td>${DepartmentName_1}</td>
                   </tr>
 
                   <tr>
-                    <td>المركز</td>
-                    <td>{MARKAZ}</td>
+                    <td>EquipmentSystemCode</td>
+                    <td>${EquipmentSystemCode_1}</td>
                   </tr>
 
                   <tr>
-                    <td>المدينة</td>
-                    <td>{EDARA_NAME}</td>
+                    <td>EquipmentName</td>
+                    <td>${EquipmentName_1}</td>
                   </tr>
 
                   <tr>
-                    <td>العنوان</td>
-                    <td>{ADDRESS}</td>
+                    <td>region</td>
+                    <td>${region_1}</td>
                   </tr>
 
                   <tr>
-                    <td>HOSP_CODE</td>
-                    <td>{HOSP_CODE}</td>
+                    <td>GovName</td>
+                    <td>${GovName_1}</td>
                   </tr>
 
                   <tr>
-                    <td>GOV_CODE</td>
-                    <td>{GOV_CODE}</td>
+                    <td>CityName</td>
+                    <td>${CityName_1}</td>
                   </tr>
 
                   <tr>
-                    <td>EDARA_CODE</td>
-                    <td>{EDARA_CODE}</td>
+                    <td>HospitalName</td>
+                    <td>${HospitalName_1}</td>
                   </tr>
 
 
                   <tr>
-                    <td>EDARA_CODE</td>
-                    <td>${name}</td>
+                    <td>EquipmentCondition</td>
+                    <td>${EquipmentCondition_1}</td>
                   </tr>
+
+                  <tr>
+                    <td>EquipmentOrgin</td>
+                    <td>${EquipmentOrgin_1}</td>
+                  </tr>
+
+                  <tr>
+                  <td>ManufacturerName</td>
+                  <td>${ManufacturerName_1}</td>
+                </tr>
+
+                <tr>
+                <td>VendorName</td>
+                <td>${VendorName_1}</td>
+              </tr>
+
+              <tr>
+              <td>EquipmentPurchaseCost</td>
+              <td>${EquipmentPurchaseCost_1}</td>
+            </tr>
+
+
+            <tr>
+            <td>EquipmentPurchaseDate</td>
+            <td>${EquipmentPurchaseDate_1}</td>
+            </tr>
+
+            <tr>
+            <td>EquipmentInstallDate</td>
+            <td>${EquipmentInstallDate_1}</td>
+            </tr>
+
+            <tr>
+            <td>EquipmentExpectedLifeTime</td>
+            <td>${EquipmentExpectedLifeTime_1}</td>
+            </tr>
+
+            <tr>
+            <td>EquipmentWarrantyExpiresDate</td>
+            <td>${EquipmentWarrantyExpiresDate_1}</td>
+            </tr>
+
+
                 </table>
               </div>
 
               <div class="tab__content">
-                <h3>Long Section</h3>
-                <p>Praesent nonummy.</p>
+
                 <table class="popupTableInfo">
-                  <tr>
-                    <td>المحافظة</td>
-                    <td>{GOV_NAME}</td>
-                  </tr>
+                <tr>
+                <td>DepartmentName</td>
+                <td>${DepartmentName_2}</td>
+              </tr>
 
-                  <tr>
-                    <td>المركز</td>
-                    <td>{MARKAZ}</td>
-                  </tr>
+              <tr>
+                <td>EquipmentSystemCode</td>
+                <td>${EquipmentSystemCode_2}</td>
+              </tr>
 
-                  <tr>
-                    <td>المدينة</td>
-                    <td>{EDARA_NAME}</td>
-                  </tr>
+              <tr>
+                <td>EquipmentName</td>
+                <td>${EquipmentName_2}</td>
+              </tr>
 
-                  <tr>
-                    <td>العنوان</td>
-                    <td>{ADDRESS}</td>
-                  </tr>
+              <tr>
+                <td>region</td>
+                <td>${region_2}</td>
+              </tr>
 
-                  <tr>
-                    <td>HOSP_CODE</td>
-                    <td>{HOSP_CODE}</td>
-                  </tr>
+              <tr>
+                <td>GovName</td>
+                <td>${GovName_2}</td>
+              </tr>
 
-                  <tr>
-                    <td>GOV_CODE</td>
-                    <td>{GOV_CODE}</td>
-                  </tr>
+              <tr>
+                <td>CityName</td>
+                <td>${CityName_2}</td>
+              </tr>
 
-                  <tr>
-                    <td>EDARA_CODE</td>
-                    <td>{EDARA_CODE}</td>
-                  </tr>
+              <tr>
+                <td>HospitalName</td>
+                <td>${HospitalName_2}</td>
+              </tr>
 
 
-                  <tr>
-                    <td>EDARA_CODE</td>
-                    <td>${name}</td>
-                  </tr>
+              <tr>
+                <td>EquipmentCondition</td>
+                <td>${EquipmentCondition_2}</td>
+              </tr>
+
+              <tr>
+                <td>EquipmentOrgin</td>
+                <td>${EquipmentOrgin_2}</td>
+              </tr>
+
+              <tr>
+              <td>ManufacturerName</td>
+              <td>${ManufacturerName_2}</td>
+            </tr>
+
+            <tr>
+            <td>VendorName</td>
+            <td>${VendorName_2}</td>
+          </tr>
+
+          <tr>
+          <td>EquipmentPurchaseCost</td>
+          <td>${EquipmentPurchaseCost_2}</td>
+        </tr>
+
+
+        <tr>
+        <td>EquipmentPurchaseDate</td>
+        <td>${EquipmentPurchaseDate_2}</td>
+        </tr>
+
+        <tr>
+        <td>EquipmentInstallDate</td>
+        <td>${EquipmentInstallDate_2}</td>
+        </tr>
+
+        <tr>
+        <td>EquipmentExpectedLifeTime</td>
+        <td>${EquipmentExpectedLifeTime_2}</td>
+        </tr>
+
+        <tr>
+        <td>EquipmentWarrantyExpiresDate</td>
+        <td>${EquipmentWarrantyExpiresDate_2}</td>
+        </tr>
+
                 </table>
               </div>
 
 
+              <div class="tab__content">
+
+              <table class="popupTableInfo">
+              <tr>
+              <td>DepartmentName</td>
+              <td>${DepartmentName_3}</td>
+            </tr>
+
+            <tr>
+              <td>EquipmentSystemCode</td>
+              <td>${EquipmentSystemCode_3}</td>
+            </tr>
+
+            <tr>
+              <td>EquipmentName</td>
+              <td>${EquipmentName_3}</td>
+            </tr>
+
+            <tr>
+              <td>region</td>
+              <td>${region_3}</td>
+            </tr>
+
+            <tr>
+              <td>GovName</td>
+              <td>${GovName_3}</td>
+            </tr>
+
+            <tr>
+              <td>CityName</td>
+              <td>${CityName_3}</td>
+            </tr>
+
+            <tr>
+              <td>HospitalName</td>
+              <td>${HospitalName_3}</td>
+            </tr>
+
+
+            <tr>
+              <td>EquipmentCondition</td>
+              <td>${EquipmentCondition_3}</td>
+            </tr>
+
+            <tr>
+              <td>EquipmentOrgin</td>
+              <td>${EquipmentOrgin_3}</td>
+            </tr>
+
+            <tr>
+            <td>ManufacturerName</td>
+            <td>${ManufacturerName_3}</td>
+          </tr>
+
+          <tr>
+          <td>VendorName</td>
+          <td>${VendorName_3}</td>
+        </tr>
+
+        <tr>
+        <td>EquipmentPurchaseCost</td>
+        <td>${EquipmentPurchaseCost_3}</td>
+      </tr>
+
+
+      <tr>
+      <td>EquipmentPurchaseDate</td>
+      <td>${EquipmentPurchaseDate_3}</td>
+      </tr>
+
+      <tr>
+      <td>EquipmentInstallDate</td>
+      <td>${EquipmentInstallDate_3}</td>
+      </tr>
+
+      <tr>
+      <td>EquipmentExpectedLifeTime</td>
+      <td>${EquipmentExpectedLifeTime_3}</td>
+      </tr>
+
+      <tr>
+      <td>EquipmentWarrantyExpiresDate</td>
+      <td>${EquipmentWarrantyExpiresDate_3}</td>
+      </tr>
+
+              </table>
+            </div>
             </div>
           </div>
           `;
             return div;
           }
+
           var popupHOSPLayer = {
             title: '{AR_NAME}',
             content: buildPopupHOSPLayer,
@@ -509,7 +797,7 @@ export class AppComponent implements OnInit {
           });
 
           view.ui.add(basemapToggle, {
-            position: 'top-right',
+            position: 'bottom-right',
           });
 
           var compass = new Compass({
@@ -531,6 +819,28 @@ export class AppComponent implements OnInit {
           });
           view.ui.add(scaleBar, {
             position: 'bottom-left',
+          });
+
+          var searchWidget = new Search({
+            view: view,
+            allPlaceholder: 'البحث باسم المدينة',
+            sources: [
+              {
+                layer: HOSPLayer,
+                searchFields: ['AR_NAME'],
+                displayField: 'AR_NAME',
+                exactMatch: false,
+                outFields: ['AR_NAME'],
+                name: 'البحث باسم المستشفى',
+                placeholder: 'البحث باسم المستشفى',
+                popupEnabled: false,
+              },
+            ],
+          });
+
+          // Add the search widget to the top left corner of the view
+          view.ui.add(searchWidget, {
+            position: 'top-right',
           });
         }
       )
