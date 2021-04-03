@@ -8529,8 +8529,14 @@ body,
   width: 100%;
   direction: rtl;
 }
-.popupTableInfo td {
+.popupTableInfo tr td  {
   border: 1px solid #ddd;
+  padding: 8px;
+  text-align: right;
+}
+.popupTableInfo tr th {
+  border: 1px solid #ddd;
+  background-color: antiquewhite;
   padding: 8px;
   text-align: right;
 }
@@ -8539,6 +8545,10 @@ body,
 }
 .popupTableInfo tr:hover {
   background-color: #ddd;
+}
+/* popup */
+.esri-view-width-xlarge .esri-popup__main-container{
+width: 660px !important;
 }
 /* popup style */
 .tab-wrap {
@@ -8633,7 +8643,7 @@ body,
   color: #333;
   flex-grow: 3;
   text-align: center;
-  background-color: #f2f2f2;
+  background-color: #68c1f5;
   -webkit-user-select: none;
           user-select: none;
   text-align: center;
@@ -8646,7 +8656,7 @@ body,
   background-color: #f9f9f9;
   box-shadow: 0 1px 0 #f4f4f4 inset;
 }
-.tab__content {
+/* .tab__content {
   padding: 10px 25px;
   background-color: transparent;
   position: absolute;
@@ -8656,7 +8666,7 @@ body,
   left: 0;
   transform: translateY(-3px);
   border-radius: 6px;
-}
+} */
 .container {
   margin: 0 auto;
   display: block;
