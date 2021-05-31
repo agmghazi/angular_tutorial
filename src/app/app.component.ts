@@ -307,16 +307,14 @@ export class AppComponent implements OnInit {
 
                           //second point
                           let latitude2 = Number(
-                            (window as any).view.popup.selectedFeature.geometry
-                              .latitude
+                            results.features[0].geometry.latitude
                           ); // The Number() only visualizes the type and is not needed
                           let roundedlatitude2 = latitude2.toFixed(3);
                           let rounlatitude2 = Number(roundedlatitude2); // toFixed() returns a string (often suitable for printing already)
                           console.log('rounded', rounlatitude2);
 
                           let longitude2 = Number(
-                            (window as any).view.popup.selectedFeature.geometry
-                              .longitude
+                            results.features[0].geometry.longitude
                           ); // The Number() only visualizes the type and is not needed
                           let roundedlongitude2 = longitude2.toFixed(3);
                           let rounlongitude2 = Number(roundedlongitude2); // toFixed() returns a string (often suitable for printing already)
