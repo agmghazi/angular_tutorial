@@ -42,6 +42,18 @@ export class AppComponent implements OnInit {
         'esri/widgets/ScaleBar',
         'esri/Graphic',
         'esri/widgets/Search',
+        'esri/tasks/RouteTask',
+        'esri/tasks/support/RouteParameters',
+        'esri/tasks/support/FeatureSet',
+        'esri/config',
+        'esri/geometry/geometryEngine',
+        'esri/layers/GraphicsLayer',
+        'esri/geometry/Point',
+        'esri/tasks/QueryTask',
+        'esri/tasks/support/Query',
+        'esri/tasks/support/DistanceParameters',
+        'esri/tasks/GeometryService',
+        'esri/geometry/support/geodesicUtils',
       ],
       options
     )
@@ -56,14 +68,37 @@ export class AppComponent implements OnInit {
           ScaleBar,
           Graphic,
           Search,
+          RouteTask,
+          RouteParameters,
+          FeatureSet,
+          esriConfig,
+          geometryEngine,
+          GraphicsLayer,
+          Point,
+          QueryTask,
+          Query,
+          DistanceParameters,
+          GeometryService,
+          geodesicUtils,
         ]) => {
           //#region HOSPLayer(Point)
+          const unit = 'kilometers';
+
+          const apiKey =
+            'AAPK3dec25c93f77440089acb335a76a63aeRp1-RNQrf3ZDSmSdPcr0qALRsafRK1ieC5iBM7mNBcmj30-BjG0Bucuu5kwLCkLV';
+
+          esriConfig.apiKey = apiKey;
+
+          // Create layers
+          const bufferLayer = new GraphicsLayer({
+            blendMode: 'hard-light',
+          });
+          (window as any)._bufferLayer = bufferLayer;
           var HOSPLayerSymbol = {
             type: 'simple',
             symbol: {
               type: 'picture-marker',
-              url:
-                'https://upload.wikimedia.org/wikipedia/commons/1/18/Hospital_pointer.png',
+              url: 'https://upload.wikimedia.org/wikipedia/commons/1/18/Hospital_pointer.png',
               width: '30px',
               height: '30px',
             },
@@ -187,7 +222,280 @@ export class AppComponent implements OnInit {
 
                   let divDevicesTdNameValue = document.createElement('td');
                   divDevicesTdNameValue.textContent = element.EquipmentName;
+                  divDevicesTdNameValue.addEventListener('click', function () {
+                    console.log((window as any).view.popup.selectedFeature);
 
+                    var enterNumOfBuffer = prompt(
+                      ' يرجي ادخال قيمه الحرم المراد البحث بداخله بالكيلومتر',
+                      '100'
+                    );
+                    if (enterNumOfBuffer == null || enterNumOfBuffer == '') {
+                      console.log('not enter any data from prompt');
+                    } else {
+                      let numBuffer = parseInt(enterNumOfBuffer);
+                      if (isNaN(numBuffer)) {
+                        alert(' يرجي ادخال رقم باللغه الانجليزيه');
+                      } else {
+                        // alert(numBuffer);
+
+                        // createBuffer(
+                        //   (window as any).view.popup.selectedFeature.geometry,
+                        //   numBuffer
+                        // );
+                        view.graphics.removeAll();
+                        bufferLayer.removeAll();
+                        createBuffer(
+                          (window as any).view.popup.selectedFeature.geometry,
+                          numBuffer
+                        );
+
+                        let queryTaskS = new QueryTask({
+                          url: 'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_NHealth_gdb/FeatureServer/0',
+                        });
+                        let queryS = new Query();
+
+                        queryS.geometry = (
+                          window as any
+                        )._bufferLayer.graphics.items[0].geometry;
+                        queryS.spatialRelationship = 'contains';
+                        queryS.returnGeometry = true;
+                        queryS.outFields = ['*'];
+                        queryS.spatialRelationship = 'intersects';
+                        queryS.returnDistinctValues = true;
+                        queryS.returnQueryGeometry = true;
+
+                        queryTaskS.execute(queryS).then((results: any) => {
+                          console.log('results', results);
+
+                          const join = geodesicUtils.geodesicDistance(
+                            new Point({
+                              x: (window as any).view.popup.selectedFeature
+                                .geometry.longitude,
+                              y: (window as any).view.popup.selectedFeature
+                                .geometry.latitude,
+                            }),
+                            new Point({
+                              x: results.features[0].geometry.longitude,
+                              y: results.features[0].geometry.latitude,
+                            }),
+                            'kilometers'
+                          );
+                          const { distance, azimuth } = join;
+
+                          console.log(
+                            'Distance: ',
+                            distance,
+                            ', Direction: ',
+                            azimuth
+                          );
+
+                          let latitude = Number(
+                            (window as any).view.popup.selectedFeature.geometry
+                              .latitude
+                          ); // The Number() only visualizes the type and is not needed
+                          let roundedlatitude = latitude.toFixed(3);
+                          let rounlatitude = Number(roundedlatitude); // toFixed() returns a string (often suitable for printing already)
+                          console.log('rounded', rounlatitude);
+
+                          let longitude = Number(
+                            (window as any).view.popup.selectedFeature.geometry
+                              .longitude
+                          ); // The Number() only visualizes the type and is not needed
+                          let roundedlongitude = longitude.toFixed(3);
+                          let rounlongitude = Number(roundedlongitude); // toFixed() returns a string (often suitable for printing already)
+                          console.log('rounded', rounlongitude);
+
+                          //second point
+                          let latitude2 = Number(
+                            (window as any).view.popup.selectedFeature.geometry
+                              .latitude
+                          ); // The Number() only visualizes the type and is not needed
+                          let roundedlatitude2 = latitude2.toFixed(3);
+                          let rounlatitude2 = Number(roundedlatitude2); // toFixed() returns a string (often suitable for printing already)
+                          console.log('rounded', rounlatitude2);
+
+                          let longitude2 = Number(
+                            (window as any).view.popup.selectedFeature.geometry
+                              .longitude
+                          ); // The Number() only visualizes the type and is not needed
+                          let roundedlongitude2 = longitude2.toFixed(3);
+                          let rounlongitude2 = Number(roundedlongitude2); // toFixed() returns a string (often suitable for printing already)
+                          console.log('rounded', rounlongitude2);
+
+                          if (
+                            rounlatitude === rounlatitude2 ||
+                            rounlongitude === rounlongitude2
+                          ) {
+                            console.log('point 1 = point 2 , fix it');
+
+                            getRoute(
+                              (window as any).view.popup.selectedFeature
+                                .geometry,
+                              results.features[1].geometry
+                            );
+                          } else {
+                            getRoute(
+                              (window as any).view.popup.selectedFeature
+                                .geometry,
+                              results.features[0].geometry
+                            );
+                          }
+                        });
+
+                        function createBuffer(point: any, length: any) {
+                          // buffer
+                          const buffer = geometryEngine.geodesicBuffer(
+                            point,
+                            length,
+                            unit
+                          );
+
+                          let bufferGraphic = new Graphic({
+                            geometry: buffer,
+                            symbol: {
+                              type: 'simple-fill',
+                              color: [81.6, 11.8, 11.8, 0.3],
+                              outline: {
+                                color: '#FFEB00',
+                                width: 2,
+                              },
+                            },
+                          });
+
+                          // Update the buffer polygon
+                          bufferGraphic.geometry = buffer;
+
+                          // Create a symbol for drawing the point
+                          var textSymbol = {
+                            type: 'text', // autocasts as new TextSymbol()
+                            color: '#77d01e',
+                            text: length + ' km ',
+                            labelPlacement: 'above-left',
+                            font: {
+                              // autocasts as new Font()
+                              size: 30,
+                              // family: "CalciteWebCoreIcons"
+                            },
+                          };
+
+                          // Create a graphic and add the geometry and symbol to it
+                          var LineGraphic = new Graphic({
+                            geometry: point,
+                            symbol: textSymbol,
+                          });
+
+                          bufferLayer.addMany([bufferGraphic, LineGraphic]);
+                        }
+                      }
+
+                      function createLineText(text: any, geometry: any) {
+                        var midIndex = Math.round(geometry.paths[0].length / 2);
+                        console.log('midIndex', midIndex);
+                        console.log('geometry.paths', geometry.paths);
+
+                        var midPoint = new Point({
+                          x: geometry.paths[0][midIndex][0],
+                          y: geometry.paths[0][midIndex][1],
+                          spatialReference: geometry.spatialReference,
+                        });
+
+                        // Create a symbol for drawing the point
+                        var textSymbol = {
+                          type: 'text', // autocasts as new TextSymbol()
+                          color: '#d01ed0',
+                          text: text + ' km ',
+                          labelPlacement: 'above-left',
+                          font: {
+                            // autocasts as new Font()
+                            size: 30,
+                            // family: "CalciteWebCoreIcons"
+                          },
+                        };
+
+                        // const polyline = {
+                        //   type: "polyline", // autocasts as new Polyline()
+                        //   paths: geometry
+                        // };
+                        // Create a graphic and add the geometry and symbol to it
+                        var textGraphic = new Graphic({
+                          geometry: midPoint,
+                          symbol: textSymbol,
+                        });
+                        view.graphics.add(textGraphic);
+                      }
+
+                      function getRoute(geo1: any, geo2: any) {
+                        const routeTask = new RouteTask({
+                          url: 'https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World',
+                        });
+
+                        const routeParams = new RouteParameters({
+                          stops: new FeatureSet({
+                            features: [
+                              new Graphic({
+                                geometry: geo1,
+                              }),
+                              new Graphic({
+                                geometry: geo2,
+                              }),
+                            ],
+                          }),
+                          returnDirections: true,
+                          directionsLanguage: 'es',
+                        });
+                        routeTask
+                          .solve(routeParams)
+                          .then((data: any) => {
+                            if (data.routeResults.length > 0) {
+                              console.log('data', data);
+                              console.log(
+                                'Total_Kilometers',
+                                data.routeResults[0].route.attributes
+                                  .Total_Kilometers
+                              );
+                              console.log(
+                                'path',
+                                data.routeResults[0].route.geometry.paths
+                              );
+
+                              let numLine = Number(
+                                data.routeResults[0].route.attributes
+                                  .Total_Kilometers
+                              ); // The Number() only visualizes the type and is not needed
+                              let roundedLine = numLine.toFixed(4);
+                              let roundedNum = Number(roundedLine); // toFixed() returns a string (often suitable for printing already)
+
+                              createLineText(
+                                roundedNum,
+                                data.routeResults[0].route.geometry
+                              );
+
+                              showRoute(data.routeResults[0].route);
+                            }
+                          })
+                          .catch((error: any) => {
+                            console.log(error);
+                          });
+                      }
+
+                      function showRoute(routeResult: any) {
+                        routeResult.symbol = {
+                          type: 'simple-line',
+                          color: [5, 150, 255],
+                          width: 3,
+                        };
+                        view.graphics.add(routeResult, 0);
+                      }
+                    }
+                    // hospitalData.forEach((element: any) => {
+                    //   if (
+                    //     element.hosptialCode ==
+                    //     feature.graphic.attributes.HOSP_CODE
+                    //   ) {
+                    //     console.log(element);
+                    //   }
+                    // });
+                  });
                   let diviceTdDate = document.createElement('td');
                   diviceTdDate.textContent = element.EquipmentInstallDate;
 
@@ -225,8 +533,7 @@ export class AppComponent implements OnInit {
           };
 
           const HOSPLayer = new FeatureLayer({
-            url:
-              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_NHealth_gdb/FeatureServer/0',
+            url: 'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_NHealth_gdb/FeatureServer/0',
             popupEnabled: true,
             renderer: HOSPLayerSymbol,
             labelingInfo: [HOSPLayerLabel],
@@ -261,8 +568,7 @@ export class AppComponent implements OnInit {
             },
           };
           const GOVLayer = new FeatureLayer({
-            url:
-              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_NHealth_gdb/FeatureServer/2',
+            url: 'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_NHealth_gdb/FeatureServer/2',
             outFields: ['*'],
             renderer: GOVLayerSymbol,
             popupEnabled: true,
@@ -296,8 +602,7 @@ export class AppComponent implements OnInit {
             },
           };
           const ADMINLLayer = new FeatureLayer({
-            url:
-              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_NHealth_gdb/FeatureServer/3',
+            url: 'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_NHealth_gdb/FeatureServer/3',
             outFields: ['*'],
             renderer: ADMINLayerSymbol,
             popupEnabled: true,
@@ -335,8 +640,7 @@ export class AppComponent implements OnInit {
             },
           };
           const SHAYAKALayer = new FeatureLayer({
-            url:
-              'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_NHealth_gdb/FeatureServer/4',
+            url: 'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_NHealth_gdb/FeatureServer/4',
             outFields: ['*'],
             renderer: SHAYAKALayerSymbol,
             popupEnabled: true,
@@ -347,6 +651,7 @@ export class AppComponent implements OnInit {
           // then we load a web map from an id
           var map = new Map({
             basemap: 'satellite',
+            layers: [bufferLayer],
           });
           map.addMany([GOVLayer, ADMINLLayer, SHAYAKALayer, HOSPLayer]);
           // and we show that map in a container w/ id #viewDiv

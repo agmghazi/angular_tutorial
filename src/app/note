@@ -1,3 +1,7 @@
+
+// upload to github
+// npm i -g  angular-cli-ghpages
+
 <div class="container">
   <div class="tab-wrap">
     <!-- active tab on page load gets checked attribute -->
