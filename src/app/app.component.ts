@@ -369,6 +369,8 @@ export class AppComponent implements OnInit {
                             color: '#77d01e',
                             text: length + ' km ',
                             labelPlacement: 'above-left',
+                            xoffset: 30,
+                            yoffset: 30,
                             font: {
                               // autocasts as new Font()
                               size: 30,
@@ -400,9 +402,11 @@ export class AppComponent implements OnInit {
                         // Create a symbol for drawing the point
                         var textSymbol = {
                           type: 'text', // autocasts as new TextSymbol()
-                          color: '#d01ed0',
+                          color: '#f01313',
                           text: text + ' km ',
                           labelPlacement: 'above-left',
+                          haloColor: 'black',
+                          haloSize: '1px',
                           font: {
                             // autocasts as new Font()
                             size: 30,
@@ -469,6 +473,13 @@ export class AppComponent implements OnInit {
                               );
 
                               showRoute(data.routeResults[0].route);
+                              setTimeout(() => {
+                                (window as any).view.goTo({
+                                  target: (window as any).view.popup
+                                    .selectedFeature.geometry,
+                                  zoom: 9,
+                                });
+                              }, 1000);
                             }
                           })
                           .catch((error: any) => {
@@ -556,11 +567,11 @@ export class AppComponent implements OnInit {
             type: 'simple',
             symbol: {
               type: 'simple-fill',
-              color: [255, 255, 0, 0.7],
+              color: [255, 255, 0, 0.5],
               style: 'backward-diagonal',
               outline: {
                 width: 1,
-                color: [255, 255, 0, 0.7],
+                color: [255, 255, 0, 0.2],
                 style: 'solid',
               },
             },
@@ -590,11 +601,11 @@ export class AppComponent implements OnInit {
             type: 'simple',
             symbol: {
               type: 'simple-fill',
-              color: [133, 160, 214, 0.7],
+              color: [133, 160, 214, 0.4],
               style: 'solid',
               outline: {
                 width: 1,
-                color: [133, 160, 214, 0.7],
+                color: [133, 160, 214, 0.2],
                 style: 'solid',
               },
             },
