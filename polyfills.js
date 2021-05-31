@@ -7,7 +7,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\NEW COURSES\angular 6\application\code\ShoppingCartApp\src\polyfills.ts */"hN/g");
+module.exports = __webpack_require__(/*! /Users/ahmedmac/Desktop/angular_tutorial/src/polyfills.ts */"hN/g");
 
 
 /***/ }),

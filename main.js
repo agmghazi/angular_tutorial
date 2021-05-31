@@ -7,7 +7,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\NEW COURSES\angular 6\application\code\ShoppingCartApp\src\main.ts */"zUnb");
+module.exports = __webpack_require__(/*! /Users/ahmedmac/Desktop/angular_tutorial/src/main.ts */"zUnb");
 
 
 /***/ }),
@@ -107,7 +107,7 @@ NavBarComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineCo
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    } }, directives: [_ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NgbNavbar"], _angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterLinkWithHref"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NgbDropdown"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NgbDropdownToggle"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NgbDropdownMenu"]], styles: [".dropdown-toggle[_ngcontent-%COMP%]{\r\n  cursor: pointer;\r\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm5hdi1iYXIuY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGVBQWU7QUFDakIiLCJmaWxlIjoibmF2LWJhci5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmRyb3Bkb3duLXRvZ2dsZXtcclxuICBjdXJzb3I6IHBvaW50ZXI7XHJcbn1cclxuIl19 */"] });
+    } }, directives: [_ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NgbNavbar"], _angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterLinkWithHref"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NgbDropdown"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NgbDropdownToggle"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_1__["NgbDropdownMenu"]], styles: [".dropdown-toggle[_ngcontent-%COMP%]{\n  cursor: pointer;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm5hdi1iYXIuY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGVBQWU7QUFDakIiLCJmaWxlIjoibmF2LWJhci5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmRyb3Bkb3duLXRvZ2dsZXtcbiAgY3Vyc29yOiBwb2ludGVyO1xufVxuIl19 */"] });
 
 
 /***/ }),
@@ -198,9 +198,29 @@ class AppComponent {
             'esri/widgets/ScaleBar',
             'esri/Graphic',
             'esri/widgets/Search',
+            'esri/tasks/RouteTask',
+            'esri/tasks/support/RouteParameters',
+            'esri/tasks/support/FeatureSet',
+            'esri/config',
+            'esri/geometry/geometryEngine',
+            'esri/layers/GraphicsLayer',
+            'esri/geometry/Point',
+            'esri/tasks/QueryTask',
+            'esri/tasks/support/Query',
+            'esri/tasks/support/DistanceParameters',
+            'esri/tasks/GeometryService',
+            'esri/geometry/support/geodesicUtils',
         ], options)
-            .then(([MapView, Map, FeatureLayer, BasemapToggle, Compass, Home, ScaleBar, Graphic, Search,]) => {
+            .then(([MapView, Map, FeatureLayer, BasemapToggle, Compass, Home, ScaleBar, Graphic, Search, RouteTask, RouteParameters, FeatureSet, esriConfig, geometryEngine, GraphicsLayer, Point, QueryTask, Query, DistanceParameters, GeometryService, geodesicUtils,]) => {
             //#region HOSPLayer(Point)
+            const unit = 'kilometers';
+            const apiKey = 'AAPK3dec25c93f77440089acb335a76a63aeRp1-RNQrf3ZDSmSdPcr0qALRsafRK1ieC5iBM7mNBcmj30-BjG0Bucuu5kwLCkLV';
+            esriConfig.apiKey = apiKey;
+            // Create layers
+            const bufferLayer = new GraphicsLayer({
+                blendMode: 'hard-light',
+            });
+            window._bufferLayer = bufferLayer;
             var HOSPLayerSymbol = {
                 type: 'simple',
                 symbol: {
@@ -307,6 +327,204 @@ class AppComponent {
                             let divDevicesTrBody = document.createElement('tr');
                             let divDevicesTdNameValue = document.createElement('td');
                             divDevicesTdNameValue.textContent = element.EquipmentName;
+                            divDevicesTdNameValue.addEventListener('click', function () {
+                                console.log(window.view.popup.selectedFeature);
+                                var enterNumOfBuffer = prompt(' يرجي ادخال قيمه الحرم المراد البحث بداخله بالكيلومتر', '100');
+                                if (enterNumOfBuffer == null || enterNumOfBuffer == '') {
+                                    console.log('not enter any data from prompt');
+                                }
+                                else {
+                                    let numBuffer = parseInt(enterNumOfBuffer);
+                                    if (isNaN(numBuffer)) {
+                                        alert(' يرجي ادخال رقم باللغه الانجليزيه');
+                                    }
+                                    else {
+                                        // alert(numBuffer);
+                                        // createBuffer(
+                                        //   (window as any).view.popup.selectedFeature.geometry,
+                                        //   numBuffer
+                                        // );
+                                        view.graphics.removeAll();
+                                        bufferLayer.removeAll();
+                                        createBuffer(window.view.popup.selectedFeature.geometry, numBuffer);
+                                        let queryTaskS = new QueryTask({
+                                            url: 'https://services9.arcgis.com/vpYrvEKDJvmCwoQX/ArcGIS/rest/services/new_NHealth_gdb/FeatureServer/0',
+                                        });
+                                        let queryS = new Query();
+                                        queryS.geometry = window._bufferLayer.graphics.items[0].geometry;
+                                        queryS.spatialRelationship = 'contains';
+                                        queryS.returnGeometry = true;
+                                        queryS.outFields = ['*'];
+                                        queryS.spatialRelationship = 'intersects';
+                                        queryS.returnDistinctValues = true;
+                                        queryS.returnQueryGeometry = true;
+                                        queryTaskS.execute(queryS).then((results) => {
+                                            console.log('results', results);
+                                            const join = geodesicUtils.geodesicDistance(new Point({
+                                                x: window.view.popup.selectedFeature
+                                                    .geometry.longitude,
+                                                y: window.view.popup.selectedFeature
+                                                    .geometry.latitude,
+                                            }), new Point({
+                                                x: results.features[0].geometry.longitude,
+                                                y: results.features[0].geometry.latitude,
+                                            }), 'kilometers');
+                                            const { distance, azimuth } = join;
+                                            console.log('Distance: ', distance, ', Direction: ', azimuth);
+                                            let latitude = Number(window.view.popup.selectedFeature.geometry
+                                                .latitude); // The Number() only visualizes the type and is not needed
+                                            let roundedlatitude = latitude.toFixed(3);
+                                            let rounlatitude = Number(roundedlatitude); // toFixed() returns a string (often suitable for printing already)
+                                            console.log('rounded', rounlatitude);
+                                            let longitude = Number(window.view.popup.selectedFeature.geometry
+                                                .longitude); // The Number() only visualizes the type and is not needed
+                                            let roundedlongitude = longitude.toFixed(3);
+                                            let rounlongitude = Number(roundedlongitude); // toFixed() returns a string (often suitable for printing already)
+                                            console.log('rounded', rounlongitude);
+                                            //second point
+                                            let latitude2 = Number(window.view.popup.selectedFeature.geometry
+                                                .latitude); // The Number() only visualizes the type and is not needed
+                                            let roundedlatitude2 = latitude2.toFixed(3);
+                                            let rounlatitude2 = Number(roundedlatitude2); // toFixed() returns a string (often suitable for printing already)
+                                            console.log('rounded', rounlatitude2);
+                                            let longitude2 = Number(window.view.popup.selectedFeature.geometry
+                                                .longitude); // The Number() only visualizes the type and is not needed
+                                            let roundedlongitude2 = longitude2.toFixed(3);
+                                            let rounlongitude2 = Number(roundedlongitude2); // toFixed() returns a string (often suitable for printing already)
+                                            console.log('rounded', rounlongitude2);
+                                            if (rounlatitude === rounlatitude2 ||
+                                                rounlongitude === rounlongitude2) {
+                                                console.log('point 1 = point 2 , fix it');
+                                                getRoute(window.view.popup.selectedFeature
+                                                    .geometry, results.features[1].geometry);
+                                            }
+                                            else {
+                                                getRoute(window.view.popup.selectedFeature
+                                                    .geometry, results.features[0].geometry);
+                                            }
+                                        });
+                                        function createBuffer(point, length) {
+                                            // buffer
+                                            const buffer = geometryEngine.geodesicBuffer(point, length, unit);
+                                            let bufferGraphic = new Graphic({
+                                                geometry: buffer,
+                                                symbol: {
+                                                    type: 'simple-fill',
+                                                    color: [81.6, 11.8, 11.8, 0.3],
+                                                    outline: {
+                                                        color: '#FFEB00',
+                                                        width: 2,
+                                                    },
+                                                },
+                                            });
+                                            // Update the buffer polygon
+                                            bufferGraphic.geometry = buffer;
+                                            // Create a symbol for drawing the point
+                                            var textSymbol = {
+                                                type: 'text',
+                                                color: '#77d01e',
+                                                text: length + ' km ',
+                                                labelPlacement: 'above-left',
+                                                font: {
+                                                    // autocasts as new Font()
+                                                    size: 30,
+                                                },
+                                            };
+                                            // Create a graphic and add the geometry and symbol to it
+                                            var LineGraphic = new Graphic({
+                                                geometry: point,
+                                                symbol: textSymbol,
+                                            });
+                                            bufferLayer.addMany([bufferGraphic, LineGraphic]);
+                                        }
+                                    }
+                                    function createLineText(text, geometry) {
+                                        var midIndex = Math.round(geometry.paths[0].length / 2);
+                                        console.log('midIndex', midIndex);
+                                        console.log('geometry.paths', geometry.paths);
+                                        var midPoint = new Point({
+                                            x: geometry.paths[0][midIndex][0],
+                                            y: geometry.paths[0][midIndex][1],
+                                            spatialReference: geometry.spatialReference,
+                                        });
+                                        // Create a symbol for drawing the point
+                                        var textSymbol = {
+                                            type: 'text',
+                                            color: '#d01ed0',
+                                            text: text + ' km ',
+                                            labelPlacement: 'above-left',
+                                            font: {
+                                                // autocasts as new Font()
+                                                size: 30,
+                                            },
+                                        };
+                                        // const polyline = {
+                                        //   type: "polyline", // autocasts as new Polyline()
+                                        //   paths: geometry
+                                        // };
+                                        // Create a graphic and add the geometry and symbol to it
+                                        var textGraphic = new Graphic({
+                                            geometry: midPoint,
+                                            symbol: textSymbol,
+                                        });
+                                        view.graphics.add(textGraphic);
+                                    }
+                                    function getRoute(geo1, geo2) {
+                                        const routeTask = new RouteTask({
+                                            url: 'https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World',
+                                        });
+                                        const routeParams = new RouteParameters({
+                                            stops: new FeatureSet({
+                                                features: [
+                                                    new Graphic({
+                                                        geometry: geo1,
+                                                    }),
+                                                    new Graphic({
+                                                        geometry: geo2,
+                                                    }),
+                                                ],
+                                            }),
+                                            returnDirections: true,
+                                            directionsLanguage: 'es',
+                                        });
+                                        routeTask
+                                            .solve(routeParams)
+                                            .then((data) => {
+                                            if (data.routeResults.length > 0) {
+                                                console.log('data', data);
+                                                console.log('Total_Kilometers', data.routeResults[0].route.attributes
+                                                    .Total_Kilometers);
+                                                console.log('path', data.routeResults[0].route.geometry.paths);
+                                                let numLine = Number(data.routeResults[0].route.attributes
+                                                    .Total_Kilometers); // The Number() only visualizes the type and is not needed
+                                                let roundedLine = numLine.toFixed(4);
+                                                let roundedNum = Number(roundedLine); // toFixed() returns a string (often suitable for printing already)
+                                                createLineText(roundedNum, data.routeResults[0].route.geometry);
+                                                showRoute(data.routeResults[0].route);
+                                            }
+                                        })
+                                            .catch((error) => {
+                                            console.log(error);
+                                        });
+                                    }
+                                    function showRoute(routeResult) {
+                                        routeResult.symbol = {
+                                            type: 'simple-line',
+                                            color: [5, 150, 255],
+                                            width: 3,
+                                        };
+                                        view.graphics.add(routeResult, 0);
+                                    }
+                                }
+                                // hospitalData.forEach((element: any) => {
+                                //   if (
+                                //     element.hosptialCode ==
+                                //     feature.graphic.attributes.HOSP_CODE
+                                //   ) {
+                                //     console.log(element);
+                                //   }
+                                // });
+                            });
                             let diviceTdDate = document.createElement('td');
                             diviceTdDate.textContent = element.EquipmentInstallDate;
                             let divicetdFact = document.createElement('td');
@@ -445,6 +663,7 @@ class AppComponent {
             // then we load a web map from an id
             var map = new Map({
                 basemap: 'satellite',
+                layers: [bufferLayer],
             });
             map.addMany([GOVLayer, ADMINLLayer, SHAYAKALayer, HOSPLayer]);
             // and we show that map in a container w/ id #viewDiv
@@ -520,7 +739,7 @@ class AppComponent {
 AppComponent.ɵfac = function AppComponent_Factory(t) { return new (t || AppComponent)(); };
 AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 1, vars: 0, consts: [["id", "viewDiv"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](0, "div", 0);
-    } }, styles: [".popupTableInfo[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\r\n  text-align: right;\r\n}\r\n\r\n.popupTableInfo[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:nth-child(even) {\r\n  background-color: #f2f2f2;\r\n}\r\n\r\n.popupTableInfo[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:hover {\r\n  background-color: #ddd;\r\n}\r\n\r\n\r\n\r\n.tab-wrap[_ngcontent-%COMP%] {\r\n  transition: 0.3s box-shadow ease;\r\n  border-radius: 6px;\r\n  max-width: 100%;\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  position: relative;\r\n  list-style: none;\r\n  background-color: #fff;\r\n  margin: 40px 0;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);\r\n}\r\n\r\n.tab-wrap[_ngcontent-%COMP%]:hover {\r\n  box-shadow: 0 12px 23px rgba(0, 0, 0, 0.23), 0 10px 10px rgba(0, 0, 0, 0.19);\r\n}\r\n\r\n.tab[_ngcontent-%COMP%] {\r\n  display: none;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]:checked:nth-of-type(1)    ~ .tab__content[_ngcontent-%COMP%]:nth-of-type(1) {\r\n  opacity: 1;\r\n  transition: 0.5s opacity ease-in, 0.8s transform ease;\r\n  position: relative;\r\n  top: 0;\r\n  z-index: 100;\r\n  transform: translateY(0px);\r\n  text-shadow: 0 0 0;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]:checked:nth-of-type(2)    ~ .tab__content[_ngcontent-%COMP%]:nth-of-type(2) {\r\n  opacity: 1;\r\n  transition: 0.5s opacity ease-in, 0.8s transform ease;\r\n  position: relative;\r\n  top: 0;\r\n  z-index: 100;\r\n  transform: translateY(0px);\r\n  text-shadow: 0 0 0;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]:checked:nth-of-type(3)    ~ .tab__content[_ngcontent-%COMP%]:nth-of-type(3) {\r\n  opacity: 1;\r\n  transition: 0.5s opacity ease-in, 0.8s transform ease;\r\n  position: relative;\r\n  top: 0;\r\n  z-index: 100;\r\n  transform: translateY(0px);\r\n  text-shadow: 0 0 0;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]:checked:nth-of-type(4)    ~ .tab__content[_ngcontent-%COMP%]:nth-of-type(4) {\r\n  opacity: 1;\r\n  transition: 0.5s opacity ease-in, 0.8s transform ease;\r\n  position: relative;\r\n  top: 0;\r\n  z-index: 100;\r\n  transform: translateY(0px);\r\n  text-shadow: 0 0 0;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]:checked:nth-of-type(5)    ~ .tab__content[_ngcontent-%COMP%]:nth-of-type(5) {\r\n  opacity: 1;\r\n  transition: 0.5s opacity ease-in, 0.8s transform ease;\r\n  position: relative;\r\n  top: 0;\r\n  z-index: 100;\r\n  transform: translateY(0px);\r\n  text-shadow: 0 0 0;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]:first-of-type:not(:last-of-type)    + label[_ngcontent-%COMP%] {\r\n  border-top-right-radius: 0;\r\n  border-bottom-right-radius: 0;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]:not(:first-of-type):not(:last-of-type)    + label[_ngcontent-%COMP%] {\r\n  border-radius: 0;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]:last-of-type:not(:first-of-type)    + label[_ngcontent-%COMP%] {\r\n  border-top-left-radius: 0;\r\n  border-bottom-left-radius: 0;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]:checked    + label[_ngcontent-%COMP%] {\r\n  background-color: #fff;\r\n  box-shadow: 0 -1px 0 #fff inset;\r\n  cursor: default;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]:checked    + label[_ngcontent-%COMP%]:hover {\r\n  box-shadow: 0 -1px 0 #fff inset;\r\n  background-color: #fff;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]    + label[_ngcontent-%COMP%] {\r\n  box-shadow: 0 -1px 0 #eee inset;\r\n  border-radius: 6px 6px 0 0;\r\n  cursor: pointer;\r\n  display: block;\r\n  text-decoration: none;\r\n  color: #333;\r\n  flex-grow: 3;\r\n  text-align: center;\r\n  background-color: #f2f2f2;\r\n  -webkit-user-select: none;\r\n          user-select: none;\r\n  text-align: center;\r\n  transition: 0.3s background-color ease, 0.3s box-shadow ease;\r\n  height: 50px;\r\n  box-sizing: border-box;\r\n  padding: 15px;\r\n}\r\n\r\n.tab[_ngcontent-%COMP%]    + label[_ngcontent-%COMP%]:hover {\r\n  background-color: #f9f9f9;\r\n  box-shadow: 0 1px 0 #f4f4f4 inset;\r\n}\r\n\r\n.tab__content[_ngcontent-%COMP%] {\r\n  padding: 10px 25px;\r\n  background-color: transparent;\r\n  position: absolute;\r\n  width: 100%;\r\n  z-index: -1;\r\n  opacity: 0;\r\n  left: 0;\r\n  transform: translateY(-3px);\r\n  border-radius: 6px;\r\n}\r\n\r\n\r\n\r\nbody[_ngcontent-%COMP%] {\r\n  font-family: 'Helvetica', sans-serif;\r\n  background-color: #e7e7e7;\r\n  color: #777;\r\n  padding: 30px 0;\r\n  font-weight: 300;\r\n}\r\n\r\n.container[_ngcontent-%COMP%] {\r\n  margin: 0 auto;\r\n  display: block;\r\n  max-width: 800px;\r\n}\r\n\r\n.container[_ngcontent-%COMP%]    > *[_ngcontent-%COMP%]:not(.tab-wrap) {\r\n  padding: 0 80px;\r\n}\r\n\r\nh1[_ngcontent-%COMP%], h2[_ngcontent-%COMP%] {\r\n  margin: 0;\r\n  color: #444;\r\n  text-align: center;\r\n  font-weight: 400;\r\n}\r\n\r\nh2[_ngcontent-%COMP%] {\r\n  font-size: 1em;\r\n  margin-bottom: 30px;\r\n}\r\n\r\nh3[_ngcontent-%COMP%] {\r\n  font-weight: 400;\r\n}\r\n\r\np[_ngcontent-%COMP%] {\r\n  line-height: 1.6;\r\n  margin-bottom: 20px;\r\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImFwcC5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7R0FNRzs7QUFFSDtFQUNFLHNCQUFzQjtFQUN0QixZQUFZO0VBQ1osaUJBQWlCO0FBQ25COztBQUVBO0VBQ0UseUJBQXlCO0FBQzNCOztBQUVBO0VBQ0Usc0JBQXNCO0FBQ3hCOztBQUVBLGdCQUFnQjs7QUFFaEI7RUFDRSxnQ0FBZ0M7RUFDaEMsa0JBQWtCO0VBQ2xCLGVBQWU7RUFDZixhQUFhO0VBQ2IsZUFBZTtFQUNmLGtCQUFrQjtFQUNsQixnQkFBZ0I7RUFDaEIsc0JBQXNCO0VBQ3RCLGNBQWM7RUFDZCx3RUFBd0U7QUFDMUU7O0FBQ0E7RUFDRSw0RUFBNEU7QUFDOUU7O0FBQ0E7RUFDRSxhQUFhO0FBQ2Y7O0FBQ0E7RUFDRSxVQUFVO0VBQ1YscURBQXFEO0VBQ3JELGtCQUFrQjtFQUNsQixNQUFNO0VBQ04sWUFBWTtFQUNaLDBCQUEwQjtFQUMxQixrQkFBa0I7QUFDcEI7O0FBQ0E7RUFDRSxVQUFVO0VBQ1YscURBQXFEO0VBQ3JELGtCQUFrQjtFQUNsQixNQUFNO0VBQ04sWUFBWTtFQUNaLDBCQUEwQjtFQUMxQixrQkFBa0I7QUFDcEI7O0FBQ0E7RUFDRSxVQUFVO0VBQ1YscURBQXFEO0VBQ3JELGtCQUFrQjtFQUNsQixNQUFNO0VBQ04sWUFBWTtFQUNaLDBCQUEwQjtFQUMxQixrQkFBa0I7QUFDcEI7O0FBQ0E7RUFDRSxVQUFVO0VBQ1YscURBQXFEO0VBQ3JELGtCQUFrQjtFQUNsQixNQUFNO0VBQ04sWUFBWTtFQUNaLDBCQUEwQjtFQUMxQixrQkFBa0I7QUFDcEI7O0FBQ0E7RUFDRSxVQUFVO0VBQ1YscURBQXFEO0VBQ3JELGtCQUFrQjtFQUNsQixNQUFNO0VBQ04sWUFBWTtFQUNaLDBCQUEwQjtFQUMxQixrQkFBa0I7QUFDcEI7O0FBQ0E7RUFDRSwwQkFBMEI7RUFDMUIsNkJBQTZCO0FBQy9COztBQUNBO0VBQ0UsZ0JBQWdCO0FBQ2xCOztBQUNBO0VBQ0UseUJBQXlCO0VBQ3pCLDRCQUE0QjtBQUM5Qjs7QUFDQTtFQUNFLHNCQUFzQjtFQUN0QiwrQkFBK0I7RUFDL0IsZUFBZTtBQUNqQjs7QUFDQTtFQUNFLCtCQUErQjtFQUMvQixzQkFBc0I7QUFDeEI7O0FBQ0E7RUFDRSwrQkFBK0I7RUFDL0IsMEJBQTBCO0VBQzFCLGVBQWU7RUFDZixjQUFjO0VBQ2QscUJBQXFCO0VBQ3JCLFdBQVc7RUFDWCxZQUFZO0VBQ1osa0JBQWtCO0VBQ2xCLHlCQUF5QjtFQUN6Qix5QkFBaUI7VUFBakIsaUJBQWlCO0VBQ2pCLGtCQUFrQjtFQUNsQiw0REFBNEQ7RUFDNUQsWUFBWTtFQUNaLHNCQUFzQjtFQUN0QixhQUFhO0FBQ2Y7O0FBQ0E7RUFDRSx5QkFBeUI7RUFDekIsaUNBQWlDO0FBQ25DOztBQUNBO0VBQ0Usa0JBQWtCO0VBQ2xCLDZCQUE2QjtFQUM3QixrQkFBa0I7RUFDbEIsV0FBVztFQUNYLFdBQVc7RUFDWCxVQUFVO0VBQ1YsT0FBTztFQUNQLDJCQUEyQjtFQUMzQixrQkFBa0I7QUFDcEI7O0FBQ0EsaUJBQWlCOztBQUNqQjtFQUNFLG9DQUFvQztFQUNwQyx5QkFBeUI7RUFDekIsV0FBVztFQUNYLGVBQWU7RUFDZixnQkFBZ0I7QUFDbEI7O0FBQ0E7RUFDRSxjQUFjO0VBQ2QsY0FBYztFQUNkLGdCQUFnQjtBQUNsQjs7QUFDQTtFQUNFLGVBQWU7QUFDakI7O0FBQ0E7RUFDRSxTQUFTO0VBQ1QsV0FBVztFQUNYLGtCQUFrQjtFQUNsQixnQkFBZ0I7QUFDbEI7O0FBQ0E7RUFDRSxjQUFjO0VBQ2QsbUJBQW1CO0FBQ3JCOztBQUNBO0VBQ0UsZ0JBQWdCO0FBQ2xCOztBQUNBO0VBQ0UsZ0JBQWdCO0VBQ2hCLG1CQUFtQjtBQUNyQiIsImZpbGUiOiJhcHAuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIi8qIC5wb3B1cFRhYmxlSW5mbyB7XHJcbiAgZm9udC1mYW1pbHk6IFwiQXZlbmlyIE5leHRcIiwgXCJIZWx2ZXRpY2EgTmV1ZVwiLCBcIkhlbHZldGljYVwiLCBcIkFyaWFsXCIsXHJcbiAgICBcInNhbnMtc2VyaWZcIjtcclxuICBib3JkZXItY29sbGFwc2U6IGNvbGxhcHNlO1xyXG4gIHdpZHRoOiAxMDAlO1xyXG4gIGRpcmVjdGlvbjogcnRsO1xyXG59ICovXHJcblxyXG4ucG9wdXBUYWJsZUluZm8gdGQge1xyXG4gIGJvcmRlcjogMXB4IHNvbGlkICNkZGQ7XHJcbiAgcGFkZGluZzogOHB4O1xyXG4gIHRleHQtYWxpZ246IHJpZ2h0O1xyXG59XHJcblxyXG4ucG9wdXBUYWJsZUluZm8gdHI6bnRoLWNoaWxkKGV2ZW4pIHtcclxuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZjJmMmYyO1xyXG59XHJcblxyXG4ucG9wdXBUYWJsZUluZm8gdHI6aG92ZXIge1xyXG4gIGJhY2tncm91bmQtY29sb3I6ICNkZGQ7XHJcbn1cclxuXHJcbi8qIHBvcHVwIHN0eWxlICovXHJcblxyXG4udGFiLXdyYXAge1xyXG4gIHRyYW5zaXRpb246IDAuM3MgYm94LXNoYWRvdyBlYXNlO1xyXG4gIGJvcmRlci1yYWRpdXM6IDZweDtcclxuICBtYXgtd2lkdGg6IDEwMCU7XHJcbiAgZGlzcGxheTogZmxleDtcclxuICBmbGV4LXdyYXA6IHdyYXA7XHJcbiAgcG9zaXRpb246IHJlbGF0aXZlO1xyXG4gIGxpc3Qtc3R5bGU6IG5vbmU7XHJcbiAgYmFja2dyb3VuZC1jb2xvcjogI2ZmZjtcclxuICBtYXJnaW46IDQwcHggMDtcclxuICBib3gtc2hhZG93OiAwIDFweCAzcHggcmdiYSgwLCAwLCAwLCAwLjEyKSwgMCAxcHggMnB4IHJnYmEoMCwgMCwgMCwgMC4yNCk7XHJcbn1cclxuLnRhYi13cmFwOmhvdmVyIHtcclxuICBib3gtc2hhZG93OiAwIDEycHggMjNweCByZ2JhKDAsIDAsIDAsIDAuMjMpLCAwIDEwcHggMTBweCByZ2JhKDAsIDAsIDAsIDAuMTkpO1xyXG59XHJcbi50YWIge1xyXG4gIGRpc3BsYXk6IG5vbmU7XHJcbn1cclxuLnRhYjpjaGVja2VkOm50aC1vZi10eXBlKDEpIH4gLnRhYl9fY29udGVudDpudGgtb2YtdHlwZSgxKSB7XHJcbiAgb3BhY2l0eTogMTtcclxuICB0cmFuc2l0aW9uOiAwLjVzIG9wYWNpdHkgZWFzZS1pbiwgMC44cyB0cmFuc2Zvcm0gZWFzZTtcclxuICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgdG9wOiAwO1xyXG4gIHotaW5kZXg6IDEwMDtcclxuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTtcclxuICB0ZXh0LXNoYWRvdzogMCAwIDA7XHJcbn1cclxuLnRhYjpjaGVja2VkOm50aC1vZi10eXBlKDIpIH4gLnRhYl9fY29udGVudDpudGgtb2YtdHlwZSgyKSB7XHJcbiAgb3BhY2l0eTogMTtcclxuICB0cmFuc2l0aW9uOiAwLjVzIG9wYWNpdHkgZWFzZS1pbiwgMC44cyB0cmFuc2Zvcm0gZWFzZTtcclxuICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgdG9wOiAwO1xyXG4gIHotaW5kZXg6IDEwMDtcclxuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTtcclxuICB0ZXh0LXNoYWRvdzogMCAwIDA7XHJcbn1cclxuLnRhYjpjaGVja2VkOm50aC1vZi10eXBlKDMpIH4gLnRhYl9fY29udGVudDpudGgtb2YtdHlwZSgzKSB7XHJcbiAgb3BhY2l0eTogMTtcclxuICB0cmFuc2l0aW9uOiAwLjVzIG9wYWNpdHkgZWFzZS1pbiwgMC44cyB0cmFuc2Zvcm0gZWFzZTtcclxuICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgdG9wOiAwO1xyXG4gIHotaW5kZXg6IDEwMDtcclxuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTtcclxuICB0ZXh0LXNoYWRvdzogMCAwIDA7XHJcbn1cclxuLnRhYjpjaGVja2VkOm50aC1vZi10eXBlKDQpIH4gLnRhYl9fY29udGVudDpudGgtb2YtdHlwZSg0KSB7XHJcbiAgb3BhY2l0eTogMTtcclxuICB0cmFuc2l0aW9uOiAwLjVzIG9wYWNpdHkgZWFzZS1pbiwgMC44cyB0cmFuc2Zvcm0gZWFzZTtcclxuICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgdG9wOiAwO1xyXG4gIHotaW5kZXg6IDEwMDtcclxuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTtcclxuICB0ZXh0LXNoYWRvdzogMCAwIDA7XHJcbn1cclxuLnRhYjpjaGVja2VkOm50aC1vZi10eXBlKDUpIH4gLnRhYl9fY29udGVudDpudGgtb2YtdHlwZSg1KSB7XHJcbiAgb3BhY2l0eTogMTtcclxuICB0cmFuc2l0aW9uOiAwLjVzIG9wYWNpdHkgZWFzZS1pbiwgMC44cyB0cmFuc2Zvcm0gZWFzZTtcclxuICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgdG9wOiAwO1xyXG4gIHotaW5kZXg6IDEwMDtcclxuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTtcclxuICB0ZXh0LXNoYWRvdzogMCAwIDA7XHJcbn1cclxuLnRhYjpmaXJzdC1vZi10eXBlOm5vdCg6bGFzdC1vZi10eXBlKSArIGxhYmVsIHtcclxuICBib3JkZXItdG9wLXJpZ2h0LXJhZGl1czogMDtcclxuICBib3JkZXItYm90dG9tLXJpZ2h0LXJhZGl1czogMDtcclxufVxyXG4udGFiOm5vdCg6Zmlyc3Qtb2YtdHlwZSk6bm90KDpsYXN0LW9mLXR5cGUpICsgbGFiZWwge1xyXG4gIGJvcmRlci1yYWRpdXM6IDA7XHJcbn1cclxuLnRhYjpsYXN0LW9mLXR5cGU6bm90KDpmaXJzdC1vZi10eXBlKSArIGxhYmVsIHtcclxuICBib3JkZXItdG9wLWxlZnQtcmFkaXVzOiAwO1xyXG4gIGJvcmRlci1ib3R0b20tbGVmdC1yYWRpdXM6IDA7XHJcbn1cclxuLnRhYjpjaGVja2VkICsgbGFiZWwge1xyXG4gIGJhY2tncm91bmQtY29sb3I6ICNmZmY7XHJcbiAgYm94LXNoYWRvdzogMCAtMXB4IDAgI2ZmZiBpbnNldDtcclxuICBjdXJzb3I6IGRlZmF1bHQ7XHJcbn1cclxuLnRhYjpjaGVja2VkICsgbGFiZWw6aG92ZXIge1xyXG4gIGJveC1zaGFkb3c6IDAgLTFweCAwICNmZmYgaW5zZXQ7XHJcbiAgYmFja2dyb3VuZC1jb2xvcjogI2ZmZjtcclxufVxyXG4udGFiICsgbGFiZWwge1xyXG4gIGJveC1zaGFkb3c6IDAgLTFweCAwICNlZWUgaW5zZXQ7XHJcbiAgYm9yZGVyLXJhZGl1czogNnB4IDZweCAwIDA7XHJcbiAgY3Vyc29yOiBwb2ludGVyO1xyXG4gIGRpc3BsYXk6IGJsb2NrO1xyXG4gIHRleHQtZGVjb3JhdGlvbjogbm9uZTtcclxuICBjb2xvcjogIzMzMztcclxuICBmbGV4LWdyb3c6IDM7XHJcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xyXG4gIGJhY2tncm91bmQtY29sb3I6ICNmMmYyZjI7XHJcbiAgdXNlci1zZWxlY3Q6IG5vbmU7XHJcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xyXG4gIHRyYW5zaXRpb246IDAuM3MgYmFja2dyb3VuZC1jb2xvciBlYXNlLCAwLjNzIGJveC1zaGFkb3cgZWFzZTtcclxuICBoZWlnaHQ6IDUwcHg7XHJcbiAgYm94LXNpemluZzogYm9yZGVyLWJveDtcclxuICBwYWRkaW5nOiAxNXB4O1xyXG59XHJcbi50YWIgKyBsYWJlbDpob3ZlciB7XHJcbiAgYmFja2dyb3VuZC1jb2xvcjogI2Y5ZjlmOTtcclxuICBib3gtc2hhZG93OiAwIDFweCAwICNmNGY0ZjQgaW5zZXQ7XHJcbn1cclxuLnRhYl9fY29udGVudCB7XHJcbiAgcGFkZGluZzogMTBweCAyNXB4O1xyXG4gIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xyXG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICB3aWR0aDogMTAwJTtcclxuICB6LWluZGV4OiAtMTtcclxuICBvcGFjaXR5OiAwO1xyXG4gIGxlZnQ6IDA7XHJcbiAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKC0zcHgpO1xyXG4gIGJvcmRlci1yYWRpdXM6IDZweDtcclxufVxyXG4vKiBib3Jpbmcgc3R1ZmYgKi9cclxuYm9keSB7XHJcbiAgZm9udC1mYW1pbHk6ICdIZWx2ZXRpY2EnLCBzYW5zLXNlcmlmO1xyXG4gIGJhY2tncm91bmQtY29sb3I6ICNlN2U3ZTc7XHJcbiAgY29sb3I6ICM3Nzc7XHJcbiAgcGFkZGluZzogMzBweCAwO1xyXG4gIGZvbnQtd2VpZ2h0OiAzMDA7XHJcbn1cclxuLmNvbnRhaW5lciB7XHJcbiAgbWFyZ2luOiAwIGF1dG87XHJcbiAgZGlzcGxheTogYmxvY2s7XHJcbiAgbWF4LXdpZHRoOiA4MDBweDtcclxufVxyXG4uY29udGFpbmVyID4gKjpub3QoLnRhYi13cmFwKSB7XHJcbiAgcGFkZGluZzogMCA4MHB4O1xyXG59XHJcbmgxLCBoMiB7XHJcbiAgbWFyZ2luOiAwO1xyXG4gIGNvbG9yOiAjNDQ0O1xyXG4gIHRleHQtYWxpZ246IGNlbnRlcjtcclxuICBmb250LXdlaWdodDogNDAwO1xyXG59XHJcbmgyIHtcclxuICBmb250LXNpemU6IDFlbTtcclxuICBtYXJnaW4tYm90dG9tOiAzMHB4O1xyXG59XHJcbmgzIHtcclxuICBmb250LXdlaWdodDogNDAwO1xyXG59XHJcbnAge1xyXG4gIGxpbmUtaGVpZ2h0OiAxLjY7XHJcbiAgbWFyZ2luLWJvdHRvbTogMjBweDtcclxufVxyXG5cclxuIl19 */"] });
+    } }, styles: [".popupTableInfo[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border: 1px solid #ddd;\n  padding: 8px;\n  text-align: right;\n}\n\n.popupTableInfo[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:nth-child(even) {\n  background-color: #f2f2f2;\n}\n\n.popupTableInfo[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:hover {\n  background-color: #ddd;\n}\n\n\n\n.tab-wrap[_ngcontent-%COMP%] {\n  transition: 0.3s box-shadow ease;\n  border-radius: 6px;\n  max-width: 100%;\n  display: flex;\n  flex-wrap: wrap;\n  position: relative;\n  list-style: none;\n  background-color: #fff;\n  margin: 40px 0;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);\n}\n\n.tab-wrap[_ngcontent-%COMP%]:hover {\n  box-shadow: 0 12px 23px rgba(0, 0, 0, 0.23), 0 10px 10px rgba(0, 0, 0, 0.19);\n}\n\n.tab[_ngcontent-%COMP%] {\n  display: none;\n}\n\n.tab[_ngcontent-%COMP%]:checked:nth-of-type(1)    ~ .tab__content[_ngcontent-%COMP%]:nth-of-type(1) {\n  opacity: 1;\n  transition: 0.5s opacity ease-in, 0.8s transform ease;\n  position: relative;\n  top: 0;\n  z-index: 100;\n  transform: translateY(0px);\n  text-shadow: 0 0 0;\n}\n\n.tab[_ngcontent-%COMP%]:checked:nth-of-type(2)    ~ .tab__content[_ngcontent-%COMP%]:nth-of-type(2) {\n  opacity: 1;\n  transition: 0.5s opacity ease-in, 0.8s transform ease;\n  position: relative;\n  top: 0;\n  z-index: 100;\n  transform: translateY(0px);\n  text-shadow: 0 0 0;\n}\n\n.tab[_ngcontent-%COMP%]:checked:nth-of-type(3)    ~ .tab__content[_ngcontent-%COMP%]:nth-of-type(3) {\n  opacity: 1;\n  transition: 0.5s opacity ease-in, 0.8s transform ease;\n  position: relative;\n  top: 0;\n  z-index: 100;\n  transform: translateY(0px);\n  text-shadow: 0 0 0;\n}\n\n.tab[_ngcontent-%COMP%]:checked:nth-of-type(4)    ~ .tab__content[_ngcontent-%COMP%]:nth-of-type(4) {\n  opacity: 1;\n  transition: 0.5s opacity ease-in, 0.8s transform ease;\n  position: relative;\n  top: 0;\n  z-index: 100;\n  transform: translateY(0px);\n  text-shadow: 0 0 0;\n}\n\n.tab[_ngcontent-%COMP%]:checked:nth-of-type(5)    ~ .tab__content[_ngcontent-%COMP%]:nth-of-type(5) {\n  opacity: 1;\n  transition: 0.5s opacity ease-in, 0.8s transform ease;\n  position: relative;\n  top: 0;\n  z-index: 100;\n  transform: translateY(0px);\n  text-shadow: 0 0 0;\n}\n\n.tab[_ngcontent-%COMP%]:first-of-type:not(:last-of-type)    + label[_ngcontent-%COMP%] {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n.tab[_ngcontent-%COMP%]:not(:first-of-type):not(:last-of-type)    + label[_ngcontent-%COMP%] {\n  border-radius: 0;\n}\n\n.tab[_ngcontent-%COMP%]:last-of-type:not(:first-of-type)    + label[_ngcontent-%COMP%] {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n.tab[_ngcontent-%COMP%]:checked    + label[_ngcontent-%COMP%] {\n  background-color: #fff;\n  box-shadow: 0 -1px 0 #fff inset;\n  cursor: default;\n}\n\n.tab[_ngcontent-%COMP%]:checked    + label[_ngcontent-%COMP%]:hover {\n  box-shadow: 0 -1px 0 #fff inset;\n  background-color: #fff;\n}\n\n.tab[_ngcontent-%COMP%]    + label[_ngcontent-%COMP%] {\n  box-shadow: 0 -1px 0 #eee inset;\n  border-radius: 6px 6px 0 0;\n  cursor: pointer;\n  display: block;\n  text-decoration: none;\n  color: #333;\n  flex-grow: 3;\n  text-align: center;\n  background-color: #f2f2f2;\n  -webkit-user-select: none;\n          user-select: none;\n  text-align: center;\n  transition: 0.3s background-color ease, 0.3s box-shadow ease;\n  height: 50px;\n  box-sizing: border-box;\n  padding: 15px;\n}\n\n.tab[_ngcontent-%COMP%]    + label[_ngcontent-%COMP%]:hover {\n  background-color: #f9f9f9;\n  box-shadow: 0 1px 0 #f4f4f4 inset;\n}\n\n.tab__content[_ngcontent-%COMP%] {\n  padding: 10px 25px;\n  background-color: transparent;\n  position: absolute;\n  width: 100%;\n  z-index: -1;\n  opacity: 0;\n  left: 0;\n  transform: translateY(-3px);\n  border-radius: 6px;\n}\n\n\n\nbody[_ngcontent-%COMP%] {\n  font-family: 'Helvetica', sans-serif;\n  background-color: #e7e7e7;\n  color: #777;\n  padding: 30px 0;\n  font-weight: 300;\n}\n\n.container[_ngcontent-%COMP%] {\n  margin: 0 auto;\n  display: block;\n  max-width: 800px;\n}\n\n.container[_ngcontent-%COMP%]    > *[_ngcontent-%COMP%]:not(.tab-wrap) {\n  padding: 0 80px;\n}\n\nh1[_ngcontent-%COMP%], h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #444;\n  text-align: center;\n  font-weight: 400;\n}\n\nh2[_ngcontent-%COMP%] {\n  font-size: 1em;\n  margin-bottom: 30px;\n}\n\nh3[_ngcontent-%COMP%] {\n  font-weight: 400;\n}\n\np[_ngcontent-%COMP%] {\n  line-height: 1.6;\n  margin-bottom: 20px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImFwcC5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7R0FNRzs7QUFFSDtFQUNFLHNCQUFzQjtFQUN0QixZQUFZO0VBQ1osaUJBQWlCO0FBQ25COztBQUVBO0VBQ0UseUJBQXlCO0FBQzNCOztBQUVBO0VBQ0Usc0JBQXNCO0FBQ3hCOztBQUVBLGdCQUFnQjs7QUFFaEI7RUFDRSxnQ0FBZ0M7RUFDaEMsa0JBQWtCO0VBQ2xCLGVBQWU7RUFDZixhQUFhO0VBQ2IsZUFBZTtFQUNmLGtCQUFrQjtFQUNsQixnQkFBZ0I7RUFDaEIsc0JBQXNCO0VBQ3RCLGNBQWM7RUFDZCx3RUFBd0U7QUFDMUU7O0FBQ0E7RUFDRSw0RUFBNEU7QUFDOUU7O0FBQ0E7RUFDRSxhQUFhO0FBQ2Y7O0FBQ0E7RUFDRSxVQUFVO0VBQ1YscURBQXFEO0VBQ3JELGtCQUFrQjtFQUNsQixNQUFNO0VBQ04sWUFBWTtFQUNaLDBCQUEwQjtFQUMxQixrQkFBa0I7QUFDcEI7O0FBQ0E7RUFDRSxVQUFVO0VBQ1YscURBQXFEO0VBQ3JELGtCQUFrQjtFQUNsQixNQUFNO0VBQ04sWUFBWTtFQUNaLDBCQUEwQjtFQUMxQixrQkFBa0I7QUFDcEI7O0FBQ0E7RUFDRSxVQUFVO0VBQ1YscURBQXFEO0VBQ3JELGtCQUFrQjtFQUNsQixNQUFNO0VBQ04sWUFBWTtFQUNaLDBCQUEwQjtFQUMxQixrQkFBa0I7QUFDcEI7O0FBQ0E7RUFDRSxVQUFVO0VBQ1YscURBQXFEO0VBQ3JELGtCQUFrQjtFQUNsQixNQUFNO0VBQ04sWUFBWTtFQUNaLDBCQUEwQjtFQUMxQixrQkFBa0I7QUFDcEI7O0FBQ0E7RUFDRSxVQUFVO0VBQ1YscURBQXFEO0VBQ3JELGtCQUFrQjtFQUNsQixNQUFNO0VBQ04sWUFBWTtFQUNaLDBCQUEwQjtFQUMxQixrQkFBa0I7QUFDcEI7O0FBQ0E7RUFDRSwwQkFBMEI7RUFDMUIsNkJBQTZCO0FBQy9COztBQUNBO0VBQ0UsZ0JBQWdCO0FBQ2xCOztBQUNBO0VBQ0UseUJBQXlCO0VBQ3pCLDRCQUE0QjtBQUM5Qjs7QUFDQTtFQUNFLHNCQUFzQjtFQUN0QiwrQkFBK0I7RUFDL0IsZUFBZTtBQUNqQjs7QUFDQTtFQUNFLCtCQUErQjtFQUMvQixzQkFBc0I7QUFDeEI7O0FBQ0E7RUFDRSwrQkFBK0I7RUFDL0IsMEJBQTBCO0VBQzFCLGVBQWU7RUFDZixjQUFjO0VBQ2QscUJBQXFCO0VBQ3JCLFdBQVc7RUFDWCxZQUFZO0VBQ1osa0JBQWtCO0VBQ2xCLHlCQUF5QjtFQUN6Qix5QkFBaUI7VUFBakIsaUJBQWlCO0VBQ2pCLGtCQUFrQjtFQUNsQiw0REFBNEQ7RUFDNUQsWUFBWTtFQUNaLHNCQUFzQjtFQUN0QixhQUFhO0FBQ2Y7O0FBQ0E7RUFDRSx5QkFBeUI7RUFDekIsaUNBQWlDO0FBQ25DOztBQUNBO0VBQ0Usa0JBQWtCO0VBQ2xCLDZCQUE2QjtFQUM3QixrQkFBa0I7RUFDbEIsV0FBVztFQUNYLFdBQVc7RUFDWCxVQUFVO0VBQ1YsT0FBTztFQUNQLDJCQUEyQjtFQUMzQixrQkFBa0I7QUFDcEI7O0FBQ0EsaUJBQWlCOztBQUNqQjtFQUNFLG9DQUFvQztFQUNwQyx5QkFBeUI7RUFDekIsV0FBVztFQUNYLGVBQWU7RUFDZixnQkFBZ0I7QUFDbEI7O0FBQ0E7RUFDRSxjQUFjO0VBQ2QsY0FBYztFQUNkLGdCQUFnQjtBQUNsQjs7QUFDQTtFQUNFLGVBQWU7QUFDakI7O0FBQ0E7RUFDRSxTQUFTO0VBQ1QsV0FBVztFQUNYLGtCQUFrQjtFQUNsQixnQkFBZ0I7QUFDbEI7O0FBQ0E7RUFDRSxjQUFjO0VBQ2QsbUJBQW1CO0FBQ3JCOztBQUNBO0VBQ0UsZ0JBQWdCO0FBQ2xCOztBQUNBO0VBQ0UsZ0JBQWdCO0VBQ2hCLG1CQUFtQjtBQUNyQiIsImZpbGUiOiJhcHAuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIi8qIC5wb3B1cFRhYmxlSW5mbyB7XG4gIGZvbnQtZmFtaWx5OiBcIkF2ZW5pciBOZXh0XCIsIFwiSGVsdmV0aWNhIE5ldWVcIiwgXCJIZWx2ZXRpY2FcIiwgXCJBcmlhbFwiLFxuICAgIFwic2Fucy1zZXJpZlwiO1xuICBib3JkZXItY29sbGFwc2U6IGNvbGxhcHNlO1xuICB3aWR0aDogMTAwJTtcbiAgZGlyZWN0aW9uOiBydGw7XG59ICovXG5cbi5wb3B1cFRhYmxlSW5mbyB0ZCB7XG4gIGJvcmRlcjogMXB4IHNvbGlkICNkZGQ7XG4gIHBhZGRpbmc6IDhweDtcbiAgdGV4dC1hbGlnbjogcmlnaHQ7XG59XG5cbi5wb3B1cFRhYmxlSW5mbyB0cjpudGgtY2hpbGQoZXZlbikge1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZjJmMmYyO1xufVxuXG4ucG9wdXBUYWJsZUluZm8gdHI6aG92ZXIge1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZGRkO1xufVxuXG4vKiBwb3B1cCBzdHlsZSAqL1xuXG4udGFiLXdyYXAge1xuICB0cmFuc2l0aW9uOiAwLjNzIGJveC1zaGFkb3cgZWFzZTtcbiAgYm9yZGVyLXJhZGl1czogNnB4O1xuICBtYXgtd2lkdGg6IDEwMCU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsZXgtd3JhcDogd3JhcDtcbiAgcG9zaXRpb246IHJlbGF0aXZlO1xuICBsaXN0LXN0eWxlOiBub25lO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZmZmO1xuICBtYXJnaW46IDQwcHggMDtcbiAgYm94LXNoYWRvdzogMCAxcHggM3B4IHJnYmEoMCwgMCwgMCwgMC4xMiksIDAgMXB4IDJweCByZ2JhKDAsIDAsIDAsIDAuMjQpO1xufVxuLnRhYi13cmFwOmhvdmVyIHtcbiAgYm94LXNoYWRvdzogMCAxMnB4IDIzcHggcmdiYSgwLCAwLCAwLCAwLjIzKSwgMCAxMHB4IDEwcHggcmdiYSgwLCAwLCAwLCAwLjE5KTtcbn1cbi50YWIge1xuICBkaXNwbGF5OiBub25lO1xufVxuLnRhYjpjaGVja2VkOm50aC1vZi10eXBlKDEpIH4gLnRhYl9fY29udGVudDpudGgtb2YtdHlwZSgxKSB7XG4gIG9wYWNpdHk6IDE7XG4gIHRyYW5zaXRpb246IDAuNXMgb3BhY2l0eSBlYXNlLWluLCAwLjhzIHRyYW5zZm9ybSBlYXNlO1xuICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gIHRvcDogMDtcbiAgei1pbmRleDogMTAwO1xuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTtcbiAgdGV4dC1zaGFkb3c6IDAgMCAwO1xufVxuLnRhYjpjaGVja2VkOm50aC1vZi10eXBlKDIpIH4gLnRhYl9fY29udGVudDpudGgtb2YtdHlwZSgyKSB7XG4gIG9wYWNpdHk6IDE7XG4gIHRyYW5zaXRpb246IDAuNXMgb3BhY2l0eSBlYXNlLWluLCAwLjhzIHRyYW5zZm9ybSBlYXNlO1xuICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gIHRvcDogMDtcbiAgei1pbmRleDogMTAwO1xuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTtcbiAgdGV4dC1zaGFkb3c6IDAgMCAwO1xufVxuLnRhYjpjaGVja2VkOm50aC1vZi10eXBlKDMpIH4gLnRhYl9fY29udGVudDpudGgtb2YtdHlwZSgzKSB7XG4gIG9wYWNpdHk6IDE7XG4gIHRyYW5zaXRpb246IDAuNXMgb3BhY2l0eSBlYXNlLWluLCAwLjhzIHRyYW5zZm9ybSBlYXNlO1xuICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gIHRvcDogMDtcbiAgei1pbmRleDogMTAwO1xuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTtcbiAgdGV4dC1zaGFkb3c6IDAgMCAwO1xufVxuLnRhYjpjaGVja2VkOm50aC1vZi10eXBlKDQpIH4gLnRhYl9fY29udGVudDpudGgtb2YtdHlwZSg0KSB7XG4gIG9wYWNpdHk6IDE7XG4gIHRyYW5zaXRpb246IDAuNXMgb3BhY2l0eSBlYXNlLWluLCAwLjhzIHRyYW5zZm9ybSBlYXNlO1xuICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gIHRvcDogMDtcbiAgei1pbmRleDogMTAwO1xuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTtcbiAgdGV4dC1zaGFkb3c6IDAgMCAwO1xufVxuLnRhYjpjaGVja2VkOm50aC1vZi10eXBlKDUpIH4gLnRhYl9fY29udGVudDpudGgtb2YtdHlwZSg1KSB7XG4gIG9wYWNpdHk6IDE7XG4gIHRyYW5zaXRpb246IDAuNXMgb3BhY2l0eSBlYXNlLWluLCAwLjhzIHRyYW5zZm9ybSBlYXNlO1xuICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gIHRvcDogMDtcbiAgei1pbmRleDogMTAwO1xuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTtcbiAgdGV4dC1zaGFkb3c6IDAgMCAwO1xufVxuLnRhYjpmaXJzdC1vZi10eXBlOm5vdCg6bGFzdC1vZi10eXBlKSArIGxhYmVsIHtcbiAgYm9yZGVyLXRvcC1yaWdodC1yYWRpdXM6IDA7XG4gIGJvcmRlci1ib3R0b20tcmlnaHQtcmFkaXVzOiAwO1xufVxuLnRhYjpub3QoOmZpcnN0LW9mLXR5cGUpOm5vdCg6bGFzdC1vZi10eXBlKSArIGxhYmVsIHtcbiAgYm9yZGVyLXJhZGl1czogMDtcbn1cbi50YWI6bGFzdC1vZi10eXBlOm5vdCg6Zmlyc3Qtb2YtdHlwZSkgKyBsYWJlbCB7XG4gIGJvcmRlci10b3AtbGVmdC1yYWRpdXM6IDA7XG4gIGJvcmRlci1ib3R0b20tbGVmdC1yYWRpdXM6IDA7XG59XG4udGFiOmNoZWNrZWQgKyBsYWJlbCB7XG4gIGJhY2tncm91bmQtY29sb3I6ICNmZmY7XG4gIGJveC1zaGFkb3c6IDAgLTFweCAwICNmZmYgaW5zZXQ7XG4gIGN1cnNvcjogZGVmYXVsdDtcbn1cbi50YWI6Y2hlY2tlZCArIGxhYmVsOmhvdmVyIHtcbiAgYm94LXNoYWRvdzogMCAtMXB4IDAgI2ZmZiBpbnNldDtcbiAgYmFja2dyb3VuZC1jb2xvcjogI2ZmZjtcbn1cbi50YWIgKyBsYWJlbCB7XG4gIGJveC1zaGFkb3c6IDAgLTFweCAwICNlZWUgaW5zZXQ7XG4gIGJvcmRlci1yYWRpdXM6IDZweCA2cHggMCAwO1xuICBjdXJzb3I6IHBvaW50ZXI7XG4gIGRpc3BsYXk6IGJsb2NrO1xuICB0ZXh0LWRlY29yYXRpb246IG5vbmU7XG4gIGNvbG9yOiAjMzMzO1xuICBmbGV4LWdyb3c6IDM7XG4gIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgYmFja2dyb3VuZC1jb2xvcjogI2YyZjJmMjtcbiAgdXNlci1zZWxlY3Q6IG5vbmU7XG4gIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgdHJhbnNpdGlvbjogMC4zcyBiYWNrZ3JvdW5kLWNvbG9yIGVhc2UsIDAuM3MgYm94LXNoYWRvdyBlYXNlO1xuICBoZWlnaHQ6IDUwcHg7XG4gIGJveC1zaXppbmc6IGJvcmRlci1ib3g7XG4gIHBhZGRpbmc6IDE1cHg7XG59XG4udGFiICsgbGFiZWw6aG92ZXIge1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZjlmOWY5O1xuICBib3gtc2hhZG93OiAwIDFweCAwICNmNGY0ZjQgaW5zZXQ7XG59XG4udGFiX19jb250ZW50IHtcbiAgcGFkZGluZzogMTBweCAyNXB4O1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB0cmFuc3BhcmVudDtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICB3aWR0aDogMTAwJTtcbiAgei1pbmRleDogLTE7XG4gIG9wYWNpdHk6IDA7XG4gIGxlZnQ6IDA7XG4gIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgtM3B4KTtcbiAgYm9yZGVyLXJhZGl1czogNnB4O1xufVxuLyogYm9yaW5nIHN0dWZmICovXG5ib2R5IHtcbiAgZm9udC1mYW1pbHk6ICdIZWx2ZXRpY2EnLCBzYW5zLXNlcmlmO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZTdlN2U3O1xuICBjb2xvcjogIzc3NztcbiAgcGFkZGluZzogMzBweCAwO1xuICBmb250LXdlaWdodDogMzAwO1xufVxuLmNvbnRhaW5lciB7XG4gIG1hcmdpbjogMCBhdXRvO1xuICBkaXNwbGF5OiBibG9jaztcbiAgbWF4LXdpZHRoOiA4MDBweDtcbn1cbi5jb250YWluZXIgPiAqOm5vdCgudGFiLXdyYXApIHtcbiAgcGFkZGluZzogMCA4MHB4O1xufVxuaDEsIGgyIHtcbiAgbWFyZ2luOiAwO1xuICBjb2xvcjogIzQ0NDtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xuICBmb250LXdlaWdodDogNDAwO1xufVxuaDIge1xuICBmb250LXNpemU6IDFlbTtcbiAgbWFyZ2luLWJvdHRvbTogMzBweDtcbn1cbmgzIHtcbiAgZm9udC13ZWlnaHQ6IDQwMDtcbn1cbnAge1xuICBsaW5lLWhlaWdodDogMS42O1xuICBtYXJnaW4tYm90dG9tOiAyMHB4O1xufVxuXG4iXX0= */"] });
 
 
 /***/ }),
